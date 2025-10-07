@@ -1,0 +1,50 @@
+:root {
+  --rojo: #E15B65;
+  --amarillo: #FF9902;
+  --negro: #1E1E1E;
+  --blanco: #FFFFFF;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--blanco);
+}
+
+/* Encabezado principal */
+.encabezado {
+  background-color: var(--rojo);
+  color: var(--blanco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 40px;
+  border-radius: 0 0 20px 20px;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.encabezado h1 {
+  font-size: 4rem;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+/* Botón de volver */
+.btn-volver {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--blanco);
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn-volver:hover {
+  transform: translateY(-50%) scale(1.2);
+}
