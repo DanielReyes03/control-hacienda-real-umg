@@ -20,12 +20,13 @@ if ($conn->connect_error) {
   <title>Módulo de Clientes - Hacienda Real</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../compartido/componentes/cabecera/cabecera.css">
 </head>
 <body>
-  <header class="encabezado">
-    <button class="btn-volver">←</button>
-    <h1>Clientes</h1>
-  </header>
+  <?php
+    include("../compartido/componentes/cabecera/index.php");
+    cabecera("Clientes");
+    ?>
 
   <main class="contenido">
     <div class="acciones">
