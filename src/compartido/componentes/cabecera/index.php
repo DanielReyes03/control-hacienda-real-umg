@@ -19,7 +19,7 @@
                         </a>
                     </div>
                     <h2 class="header__title">
-                        Inventario de Productos
+                        '.$titulo.'
                     </h2>
                     <div class="header__logo">
                         <img src="../../static/logo.png" alt="Logo">

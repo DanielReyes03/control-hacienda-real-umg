@@ -10,7 +10,8 @@
 <body>
     <?php 
         include("../compartido/componentes/cabecera/index.php");
-        cabecera("Inventario de Productos"); 
+        cabecera("Inventarios"); 
     ?>
+    
 </body>
 </html>
