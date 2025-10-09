@@ -9,8 +9,8 @@
 body {
     font-family: 'Georgia', serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f9f5f0;
+    color: #1E1E1E; /* Texto principal en negro */
+    background-color: #FFFFFF; /* Fondo blanco */
 }
 
 /* Contenedor */
@@ -22,34 +22,42 @@ body {
 
 /* Header */
 .header {
-    background-color: #4a2c0d;
-    color: #fff;
+    background-color: #E15B65; /* Rojo */
+    color: #FFFFFF; /* Blanco */
     padding: 2rem 0;
     text-align: center;
 }
 
 .header h1 {
     font-size: 2.5rem;
+    color: #FFFFFF;
     margin-bottom: 0.5rem;
 }
 
 .header p {
     font-size: 1.2rem;
+    color: #FFFFFF;
     opacity: 0.9;
 }
 
 /* Sección de Sucursales */
 .branches {
     padding: 3rem 0;
+    background-color: #FFFFFF;
 }
 
 .branches h2 {
     text-align: center;
     font-size: 2rem;
-    color: #4a2c0d;
-    margin-bottom: 2rem;
+    color: #FFFFFF; /* Blanco */
+    background-color: #E15B65; /* Fondo rojo */
+    padding: 1rem;
+    border-radius: 10px;
+    display: inline-block;
+    margin: 0 auto 2rem auto;
 }
 
+/* Tarjetas */
 .branch-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -57,51 +65,59 @@ body {
 }
 
 .branch-card {
-    background-color: #fff;
+    background-color: #FFFFFF;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 1.5rem;
-    transition: transform 0.3s ease;
+    color: #1E1E1E;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .branch-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(255, 153, 2, 0.3);
 }
 
 .branch-card h3 {
     font-size: 1.5rem;
-    color: #4a2c0d;
+    color: #E15B65;
     margin-bottom: 1rem;
 }
 
 .branch-card p {
-    margin-bottom: 0.8rem;
     font-size: 1rem;
+    margin-bottom: 0.8rem;
 }
 
 .branch-card p strong {
-    color: #4a2c0d;
+    color: #FF9902;
 }
 
-/* Estilos del formulario (para la vista de reservaciones) */
+/* Formulario */
 .reservation-form {
     padding: 3rem 0;
+    background-color: #FFFFFF;
 }
 
 .reservation-form h2 {
     text-align: center;
     font-size: 2rem;
-    color: #4a2c0d;
+    color: #FFFFFF;
+    background-color: #E15B65;
+    padding: 1rem;
+    border-radius: 10px;
+    display: inline-block;
     margin-bottom: 2rem;
 }
 
 .form-container {
-    background-color: #fff;
+    background-color: #FFFFFF;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 2rem;
     max-width: 600px;
     margin: 0 auto;
+    color: #1E1E1E;
 }
 
 .form-group {
@@ -111,7 +127,7 @@ body {
 .form-group label {
     display: block;
     font-size: 1.1rem;
-    color: #4a2c0d;
+    color: #E15B65;
     margin-bottom: 0.5rem;
 }
 
@@ -120,9 +136,10 @@ body {
 .form-group textarea {
     width: 100%;
     padding: 0.8rem;
-    border: 1px solid #ccc;
+    border: 1px solid #FF9902;
     border-radius: 5px;
     font-size: 1rem;
+    color: #1E1E1E;
     font-family: 'Georgia', serif;
 }
 
@@ -131,34 +148,64 @@ body {
     min-height: 100px;
 }
 
+/* Botón */
 .btn {
     display: inline-block;
     padding: 0.8rem 1.5rem;
-    background-color: #b68b40;
-    color: #fff;
+    background-color: #FF9902;
+    color: #FFFFFF;
     text-decoration: none;
     border-radius: 5px;
     margin-top: 1rem;
-    transition: background-color 0.3s ease;
     border: none;
-    cursor: pointer;
     font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .btn:hover {
-    background-color: #8b5e34;
+    background-color: #E15B65;
 }
 
 /* Footer */
 .footer {
-    background-color: #4a2c0d;
-    color: #fff;
+    background-color: #1E1E1E;
+    color: #FFFFFF;
     text-align: center;
     padding: 1.5rem 0;
 }
 
 .footer p {
     font-size: 1rem;
+}
+
+/* Tablas (como la de la imagen) */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table th {
+    background-color: #E15B65; /* Rojo */
+    color: #FFFFFF; /* Blanco */
+    text-align: left;
+    padding: 1rem;
+    font-weight: bold;
+}
+
+.table td {
+    color: #1E1E1E; /* Negro */
+    padding: 1rem;
+    border-top: 1px solid #FF9902; /* Amarillo suave */
+}
+
+.table tr:nth-child(even) {
+    background-color: #FFF7E6; /* Fondo ligeramente amarillo */
 }
 
 /* Responsive */

@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sucursales - Hacienda Real Guatemala</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../compartido/componentes/cabecera/cabecera.css">
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <h1>Hacienda Real - Sucursales</h1>
-            <p>Descubre nuestras ubicaciones en la Ciudad de Guatemala</p>
-        </div>
-    </header>
+<?php 
+        include("../compartido/componentes/cabecera/index.php");
+        cabecera("Sucursales"); 
+    ?>
 
     <section class="branches">
         <div class="container">

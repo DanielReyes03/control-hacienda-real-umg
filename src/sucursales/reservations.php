@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservaciones - Hacienda Real Guatemala</title>
     <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="../compartido/componentes/cabecera/cabecera.css">
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <h1>Hacienda Real - Reservaciones</h1>
-            <p>Reserva tu mesa en el steakhouse perfecto</p>
-        </div>
-    </header>
+<?php 
+        include("../compartido/componentes/cabecera/index.php");
+        cabecera("Formulario Sucursales"); 
+    ?>
 
     <section class="reservation-form">
         <div class="container">
