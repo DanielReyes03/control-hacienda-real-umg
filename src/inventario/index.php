@@ -25,7 +25,7 @@
             Producto Terminado
         </a>
         <a class="bg-[url('./assets/mobiliario-equipos.jpg')] bg-cover bg-center flex justify-center items-center w-full h-full min-w-[320px] min-h-[200px] max-w-1/4 min-h-[300px] rounded p-2 text-center text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" href="./moviliario-equipos/index.php">
-            Moviliario y equipos
+            Mobiliario y equipos
         </a>
     </div>
 </body>

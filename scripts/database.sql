@@ -130,8 +130,17 @@ CREATE TABLE `inventario_materias_primas` (
 
 CREATE TABLE `recetas` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre` varchar(150) NOT NULL,
+  `descripcion` text NULL
+);
+
+CREATE TABLE `receta_detalle` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `receta_id` int NOT NULL,
   `materia_prima_id` int NOT NULL,
-  `cantidad` decimal(12,4) NOT NULL
+  `cantidad` decimal(12,4) NOT NULL,
+    FOREIGN KEY (receta_id) REFERENCES recetas(id),
+    FOREIGN KEY (materia_prima_id) REFERENCES inventario_materias_primas(id)
 );
 
 CREATE TABLE `movimientos_inventario` (
@@ -286,8 +295,6 @@ ALTER TABLE `productos` ADD FOREIGN KEY (`categoria_id`) REFERENCES `categorias_
 ALTER TABLE `productos` ADD FOREIGN KEY (`receta_id`) REFERENCES `recetas` (`id`);
 
 ALTER TABLE `inventario_materias_primas` ADD FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`);
-
-ALTER TABLE `recetas` ADD FOREIGN KEY (`materia_prima_id`) REFERENCES `inventario_materias_primas` (`id`);
 
 ALTER TABLE `movimientos_inventario` ADD FOREIGN KEY (`inventario_mp_item_id`) REFERENCES `inventario_materias_primas` (`id`);
 
