@@ -6,12 +6,13 @@
     <title>Inventario de Materias Primas</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <link rel="stylesheet" href="../../compartido/componentes/cabecera/cabecera.css">
 </head>
 <body>
     <?php 
         include("../../compartido/componentes/cabecera/index.php");
-        cabecera("Inventario Materia Prima"); 
+        cabecera("Inventario Materia Prima", '../index.php'); 
     ?>
     <div class="p-6">
         <div class="flex justify-between items-center mb-4">
@@ -80,7 +81,7 @@
             <table class="min-w-full border-collapse">
                 <thead>
                     <tr class="bg-[#E15B65] text-white text-left">
-                        <th class="px-4 py-2">ID</th>
+                        <th class="px-4 py-2">Código</th>
                         <th class="px-4 py-2">Nombre</th>
                         <th class="px-4 py-2">Unidad</th>
                         <th class="px-4 py-2">Ancho</th>
@@ -144,7 +145,7 @@
                         <td class="px-4 py-2">${m.stock}</td>
                         <td class="px-4 py-2">${m.stock_minimo}</td>
                         <td class="px-4 py-2">${m.sucursal}</td>
-                        <td class="px-4 py-2">${m.creado_en ?? ''}</td>
+                        <td class="px-4 py-2">${m.creado_en ? moment(m.creado_en).format("DD/MM/YYYY HH:SS") : ''}</td>
                         <td class="px-4 py-2">
                             <button class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded editar" data-id="${m.id}">Editar</button>
                             <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded eliminar" data-id="${m.id}">Eliminar</button>
