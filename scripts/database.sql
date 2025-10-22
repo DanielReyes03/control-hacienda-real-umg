@@ -93,6 +93,7 @@ CREATE TABLE `proveedores` (
   `correo` varchar(150),
   `producto_suministra` varchar(255),
   `direccion` varchar(255),
+  `origen` varchar(50),
   `creado_en` datetime
 );
 
