@@ -1,15 +1,5 @@
 <?php
-// Configuración de la base de datos
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
-
-$conn = new mysqli($host, $user, $password, $database);
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
-
+include("../conexion/conexion.php");
 $mensaje = '';
 $es_error = false;
 
@@ -66,7 +56,7 @@ $conn->close();
 <body>
 <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Crear Proveedor");
+    cabecera("Crear Nuevo Proveedor", "proveedores");
 ?>
   <main class="contenido">
     <form method="POST" class="formulario" id="formulario">

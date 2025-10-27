@@ -1,18 +1,4 @@
-<?php
-// Configuración de la base de datos
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
 
-// Crear conexión
-$conn = new mysqli($host, $user, $password, $database);
-
-// Revisar conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -27,7 +13,8 @@ if ($conn->connect_error) {
 <body>
   <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Proveedores");
+    include("../conexion/conexion.php");
+    cabecera("Proveedores", "menu");
   ?>
 
   <main class="contenido">

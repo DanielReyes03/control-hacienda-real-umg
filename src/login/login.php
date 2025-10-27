@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>La Hacienda Real - Acceso</title>
-  <link rel="stylesheet" href="/CSS/login.css">
+  <link rel="stylesheet" href="./CSS/login.css">
 </head>
 <body>
   <div class="container">
     <!-- Encabezado -->
     <div class="header">
-      <img src="/assets/img/Logo-Hacienda-Real.png" alt="Logo La Hacienda Real">
+      <img src="./assets/img/Logo-Hacienda-Real.png" alt="Logo La Hacienda Real">
       <h1>La Hacienda Real</h1>
       <p class="slogan">El sabor auténtico de la carne</p>
     </div>
@@ -18,7 +18,7 @@
     <!-- Login -->
     <div class="form-container" id="login-form">
       <h2>Iniciar Sesión</h2>
-      <form>
+      <form method="POST" action="auth.php">
         <input type="email" placeholder="Correo electrónico" required>
         <input type="password" placeholder="Contraseña" required>
         <button type="submit">Entrar</button>
@@ -48,6 +48,6 @@
     </div>
   </div>
 
-  <script src="/JS/login.js"></script>
+  <script src="./JS/login.js"></script>
 </body>
 </html>

@@ -1,15 +1,6 @@
 <?php
 // Configuración de la base de datos
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
-
-$conn = new mysqli($host, $user, $password, $database);
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
-
+include("../conexion/conexion.php");
 $id = intval($_GET['id'] ?? 0);
 $cliente = null;
 $mensaje = '';
@@ -82,7 +73,7 @@ $conn->close();
 <body>
   <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Editar Proveedor");
+    cabecera("Editar Proveedor", "proveedores");
   ?>
 
   <main class="contenido">

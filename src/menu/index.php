@@ -145,12 +145,12 @@
   <!-- Navbar -->
   <nav>
     <div class="logo">
-      <img src="/assets/img/Logo-Hacienda-Real.png" alt="Logo">
+      <img src="../login/assets/img/Logo-Hacienda-Real.png" alt="Logo">
       HACIENDA REAL
     </div>
     <ul>
-      <li><a href="#">Menú</a></li>
-      <li><a href="login.php">Inicio de sesión</a></li>
+      <li><a href="index.php">Menú</a></li>
+      <li><a href="../login/login.php">Inicio de sesión</a></li>
     </ul>
   </nav>
 
@@ -161,35 +161,35 @@
 
   <section class="grid-container">
     <div class="grid-item">
-      <img src="/assets/img/pexels-tiger-lily-4483610.jpg" alt="Cafés">
+      <img src="../login/assets/img/pexels-tiger-lily-4483610.jpg" alt="Cafés">
       <div class="overlay">INVENTARIO</div>
     </div>
     <div class="grid-item">
-      <img src="/assets/img/pexels-cottonbro-4068314.jpg" alt="Viajes">
+      <img src="../login/assets/img/pexels-cottonbro-4068314.jpg" alt="Viajes">
       <div class="overlay">COMPRAS</div>
     </div>
     <div class="grid-item">
-      <img src="/assets/img/pexels-cenali-2733918.jpg" alt="Lista Verde">
+      <img src="../login/assets/img/pexels-artempodrez-5025489.jpg" alt="Lista Verde">
       <div class="overlay">PROVEEDORES</div>
     </div>
     <div class="grid-item">
-      <img src="/assets/img/pexels-artempodrez-5025489.jpg" alt="Deco">
+      <img src="../login/assets/img/pexels-olly-3760072.jpg" alt="Deco">
       <div class="overlay">VENTAS</div>
     </div>
     <div class="grid-item">
-      <img src="/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Diario">
+      <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Diario">
       <div class="overlay">PLANILLA</div>
     </div>
     <div class="grid-item">
-      <img src="/assets/img/pexels-kampus-8931691.jpg" alt="Diario">
+      <img src="../login/assets/img/pexels-kampus-8931691.jpg" alt="Diario">
       <div class="overlay">SERVICIO DOMICILIO</div>
     </div>
     <div class="grid-item">
-      <img src="/assets/img/fondositio.jpg" alt="Diario">
+      <img src="../login/assets/img/fondositio.jpg" alt="Diario">
       <div class="overlay">SUCURSALES</div>
     </div>
     <div class="grid-item">
-      <img src="/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Diario">
+      <img src="../login/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Diario">
       <div class="overlay">CONTROL DE VEHICULOS</div>
     </div>
   </section>

@@ -22,7 +22,7 @@ body {
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
-  background-image: url(/assets/img/fondositio.jpg);
+  background-image: url('../assets/img/fondositio.jpg');
   background-position: center;
   background-size: cover;
 }
