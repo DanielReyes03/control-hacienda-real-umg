@@ -1,5 +1,5 @@
 <?php
-    function cabecera($titulo){
+    function cabecera($titulo, $linkRegresar="../../index.php") {
         echo '
             <!DOCTYPE html>
             <html lang="en">
@@ -12,7 +12,7 @@
             <body>
                 <header class="header">
                     <div class="header__backbutton">
-                        <a href="../../index.php" type="button">
+                        <a href="'.$linkRegresar.'" type="button">
                             <svg width="32px" height="32px" viewBox="0 0 24 24" stroke-width="1.9" fill="none" xmlns="http://www.w3.org/2000/svg" color="#FFF">
                                 <path d="M21 12L3 12M3 12L11.5 3.5M3 12L11.5 20.5" stroke="#FFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
