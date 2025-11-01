@@ -184,7 +184,7 @@
       <img src="../login/assets/img/pexels-kampus-8931691.jpg" alt="Diario">
       <div class="overlay">SERVICIO DOMICILIO</div>
     </div>
-    <div class="grid-item">
+    <div class="grid-item" onclick="redirigir('../sucursales/index.php')" style="cursor:pointer;">
       <img src="../login/assets/img/fondositio.jpg" alt="Diario">
       <div class="overlay">SUCURSALES</div>
     </div>

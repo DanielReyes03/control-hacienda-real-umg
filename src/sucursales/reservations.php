@@ -16,8 +16,13 @@
     <section class="reservation-form">
         <div class="container">
             <h2>Formulario de Reservación</h2>
+            <?php if (isset($_GET['message'])): ?>
+                <div style="text-align: center; margin-bottom: 20px; padding: 10px; background-color: #f0f0f0; border-radius: 5px;">
+                    <?php echo htmlspecialchars($_GET['message']); ?>
+                </div>
+            <?php endif; ?>
             <div class="form-container">
-                <form action="#" method="post">
+                <form action="Guardar_reservation.php" method="post">
                     <div class="form-group">
                         <label for="name">Nombre Completo</label>
                         <input type="text" id="name" name="name" required placeholder="Ej. Juan Pérez">
