@@ -1,0 +1,5 @@
+- [x] Crear tabla 'reservaciones' en la BD con campos: id, name, email, phone, branch, date, time, guests, comments, created_at
+- [x] Separar lógica: reservations.php solo HTML, Guardar_reservation.php procesa POST y guarda en BD
+- [x] Probar el formulario para asegurar que guarda correctamente (servidor PHP iniciado, formulario listo para pruebas)
+- [x] Arreglar error de headers cambiando desconectar por $conn->close()
+- [x] Verificar que los datos se guardan en la BD
