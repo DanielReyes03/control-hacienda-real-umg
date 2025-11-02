@@ -155,6 +155,46 @@ CREATE TABLE `movimientos_inventario` (
   `notas` text
 );
 
+CREATE TABLE categorias_activos (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  descripcion VARCHAR(255)
+);
+
+CREATE TABLE activos (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  categoria_id INT,
+  sucursal_id INT,
+  codigo_interno VARCHAR(50) UNIQUE NOT NULL,
+  nombre VARCHAR(150) NOT NULL,
+  descripcion TEXT,
+  marca VARCHAR(100),
+  modelo VARCHAR(100),
+  serie VARCHAR(100),
+  fecha_adquisicion DATE,
+  costo DECIMAL(12,2) DEFAULT 0,
+  estado VARCHAR(20) DEFAULT 'activo' COMMENT 'enum: ''activo'',''en_reparacion'',''baja''',
+  creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (categoria_id) REFERENCES categorias_activos(id),
+  FOREIGN KEY (sucursal_id) REFERENCES sucursales(id)
+);
+
+-- Historial de movimientos o cambios de estado de los activos
+CREATE TABLE movimientos_activos (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  activo_id INT NOT NULL,
+  tipo_movimiento ENUM('asignacion','traslado','mantenimiento','baja','alta','otro') NOT NULL,
+  fecha_movimiento DATETIME DEFAULT CURRENT_TIMESTAMP,
+  origen_id INT NULL COMMENT 'Sucursal o ubicación de salida',
+  destino_id INT NULL COMMENT 'Sucursal o ubicación de destino',
+  observaciones TEXT,
+  usuario_registro VARCHAR(100) DEFAULT NULL COMMENT 'Quién registró el movimiento',
+  FOREIGN KEY (activo_id) REFERENCES activos(id),
+  FOREIGN KEY (origen_id) REFERENCES sucursales(id),
+  FOREIGN KEY (destino_id) REFERENCES sucursales(id)
+);
+
+
 CREATE TABLE `compras` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `proveedor_id` int,
