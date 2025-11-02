@@ -10,6 +10,6 @@ function conectar() {
 
 function desconectar($conn) {
     $conn->close();
-    echo "\n\nConexión cerrada.";
+
 }
 ?>

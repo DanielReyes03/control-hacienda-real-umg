@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../login/login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,33 +18,18 @@
       font-family: 'Helvetica Neue', Arial, sans-serif;
       color: #111;
       text-align: center;
-      position: relative;
       min-height: 100vh;
-      overflow-x: hidden;
+      background-color: #f6f8fa;
     }
 
-    /* Fondo con blur */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      filter: blur(4px);
-      z-index: -1;
-    }
-
-    /* Navbar */
+    /* NAVBAR */
     nav {
       display: flex;
-      justify-content: space-between;
+      justify-content: center; /* Centra todo el contenido del nav */
       align-items: center;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 10px 30px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      background: linear-gradient(90deg, #ffffffcc, #f3f3f3cc);
+      padding: 10px 40px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       position: fixed;
       top: 0;
       left: 0;
@@ -44,7 +37,15 @@
       z-index: 1000;
     }
 
-    nav .logo {
+    .nav-content {
+      width: 100%;
+      max-width: 1100px; /* ancho máximo centrado */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
       display: flex;
       align-items: center;
       font-weight: bold;
@@ -52,69 +53,87 @@
       color: #222;
     }
 
-    nav .logo img {
-      height: 40px;
+    .logo img {
+      height: 45px;
       margin-right: 10px;
     }
 
-    nav ul {
-      list-style: none;
+    .user-info {
       display: flex;
+      align-items: center;
       gap: 20px;
-      margin-right: 50px;
-      padding: 10px;
     }
 
-    nav ul li {
-      display: inline;
+    .user-details {
+      text-align: right;
     }
 
-    nav ul li a {
+    .user-details h1 {
+      font-size: 1rem;
+      margin: 0;
+      color: #444;
+    }
+
+    .user-details p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    .user-info a {
       text-decoration: none;
-      color: #222;
+      background-color: #e63946;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
       font-weight: bold;
-      transition: color 0.3s;
+      transition: background-color 0.3s ease;
     }
 
-    nav ul li a:hover {
-      color: #0077b6;
+    .user-info a:hover {
+      background-color: #d62828;
     }
 
-    /* Header */
+    /* HEADER */
     header {
-      padding: 100px 20px 40px; /* más padding por navbar fijo */
+      padding: 120px 20px 40px;
     }
 
     header h1 {
       font-size: 2.5rem;
-      margin: 0;
       font-weight: bold;
+      margin-bottom: 10px;
     }
 
     header p {
-      margin: 10px 0 0;
       font-size: 1rem;
       letter-spacing: 2px;
+      color: #555;
     }
 
-    /* Grid */
+    /* GRID */
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 15px;
       padding: 20px;
       max-width: 1100px;
-      /* Removí height fija para que se expanda dinámicamente */
       margin: auto;
     }
 
     .grid-item {
       position: relative;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.15);
       max-height: 250px;
-      cursor: pointer; /* Cursor pointer para todos los items interactivos */
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      background: #fff;
+    }
+
+    .grid-item:hover {
+      transform: translateY(-5px);
     }
 
     .grid-item img {
@@ -131,66 +150,78 @@
 
     .overlay {
       position: absolute;
-      bottom: 20px;
+      bottom: 15px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.85);
-      padding: 8px 16px;
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px 20px;
+      border-radius: 6px;
       font-weight: bold;
-      font-size: 0.9rem;
+      font-size: 1rem;
+      color: #111;
     }
 
-    .clientes-centrado,
-    .reservaciones-centrado {
+    .clientes-centrado {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 40px; /* Espacio debajo del grid */
+      margin: 40px 0;
     }
 
-    .grid-item.clientes,
-    .grid-item.reservaciones {
+    .grid-item.clientes {
       width: 300px;
       height: 200px;
     }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
+
+  <!-- NAVBAR -->
   <nav>
-    <div class="logo">
-      <img src="../login/assets/img/Logo-Hacienda-Real.png" alt="Logo">
-      HACIENDA REAL
+    <div class="nav-content">
+      <div class="logo">
+        <img src="../login/assets/img/Logo-Hacienda-Real.png" alt="Logo">
+        HACIENDA REAL
+      </div>
+
+      <div class="user-info">
+        <div class="user-details">
+          <h1>Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre_completo']); ?></h1>
+          <p>Rol: <?php echo htmlspecialchars($_SESSION['rol_id']); ?></p>
+        </div>
+        <a href="../login/logout.php">Cerrar sesión</a>
+      </div>
     </div>
-    <ul>
-      <li><a href="index.php">Menú</a></li>
-      <li><a href="../login/login.php">Inicio de sesión</a></li>
-    </ul>
   </nav>
 
+  <!-- HEADER -->
   <header>
     <h1>SISTEMA WEB HACIENDA REAL</h1>
-    <p>Bienvenido</p>
+    <p>Bienvenido al panel principal</p>
   </header>
 
+  <!-- MENÚ PRINCIPAL -->
   <section class="grid-container">
     <div class="grid-item" onclick="redirigir('../inventario/index.php')">
       <img src="../login/assets/img/pexels-tiger-lily-4483610.jpg" alt="Inventario">
       <div class="overlay">INVENTARIO</div>
     </div>
-    <div class="grid-item" onclick="redirigir('../compras/index.php')">
+
+    <div class="grid-item" onclick="redirigir('../login/admin_usuarios.php')">
       <img src="../login/assets/img/pexels-cottonbro-4068314.jpg" alt="Compras">
       <div class="overlay">COMPRAS</div>
     </div>
+
     <div class="grid-item" onclick="redirigir('../Proveedores/index.php')">
       <img src="../login/assets/img/pexels-artempodrez-5025489.jpg" alt="Proveedores">
       <div class="overlay">PROVEEDORES</div>
     </div>
+
     <div class="grid-item" onclick="redirigir('../ventas/index.php')">
       <img src="../login/assets/img/pexels-olly-3760072.jpg" alt="Ventas">
       <div class="overlay">VENTAS</div>
     </div>
+
     <div class="grid-item" onclick="redirigir('../planilla/index.php')">
       <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Planilla">
       <div class="overlay">PLANILLA</div>
@@ -199,15 +230,19 @@
       <img src="../login/assets/img/pexels-kampus-8931691.jpg" alt="Servicio Domicilio">
       <div class="overlay">SERVICIO DOMICILIO</div>
     </div>
-    <div class="grid-item sucursales" onclick="redirigir('../sucursales/index.php')">
+
+    <div class="grid-item" onclick="redirigir('../sucursales/index.php')">
       <img src="../login/assets/img/fondositio.jpg" alt="Sucursales">
       <div class="overlay">SUCURSALES</div>
     </div>
+
     <div class="grid-item" onclick="redirigir('../Vehiculos/index.php')">
       <img src="../login/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Control de Vehículos">
-      <div class="overlay">CONTROL DE VEHICULOS</div>
+      <div class="overlay">CONTROL DE VEHÍCULOS</div>
     </div>
   </section>
+
+  <!-- CLIENTES -->
   <div class="clientes-centrado">
     <div class="grid-item clientes" onclick="redirigir('../clientes/index.php')">
       <img src="../login/assets/img/clientes.jpg" alt="Clientes">
@@ -215,13 +250,11 @@
     </div>
   </div>
 
-
-
   <script>
     function redirigir(ruta) {
-      // Redirige directamente a la ruta que pases
       window.location.href = ruta;
     }
   </script>
+
 </body>
 </html>
