@@ -8,14 +8,14 @@ if ($id <= 0) {
     exit;
 }
 
-$stmt = $conn->prepare("DELETE FROM proveedores WHERE id = ?");
+$stmt = $conn->prepare("DELETE FROM vehiculos WHERE id = ?");
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
     if ($stmt->affected_rows > 0) {
-        header('Location: index.php?success=Proveedor eliminado exitosamente');
+        header('Location: index.php?success=Vehículo eliminado exitosamente');
     } else {
-        header('Location: index.php?error=Proveedor no encontrado');
+        header('Location: index.php?error=Vehículo no encontrado');
     }
 } else {
     header('Location: index.php?error=Error al eliminar: ' . urlencode($conn->error));

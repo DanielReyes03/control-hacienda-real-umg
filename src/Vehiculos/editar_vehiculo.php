@@ -1,10 +1,10 @@
 <?php
-require_once "../login/check_admin.php";
+require_once "../login/check_adminGer.php";
 // Configuración de la base de datos
 include("../db/conexion.php");
 $conn = conectar();
 $id = intval($_GET['id'] ?? 0);
-$cliente = null;
+$vehiculo = null;
 $mensaje = '';
 $es_error = false;
 
@@ -13,42 +13,41 @@ if ($id <= 0) {
     exit;
 }
 
-// Obtener datos actuales del cliente
-$stmt = $conn->prepare("SELECT * FROM proveedores WHERE id = ?");
+// Obtener datos actuales del vehículo
+$stmt = $conn->prepare("SELECT * FROM vehiculos WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
-$cliente = $result->fetch_assoc();
+$vehiculo = $result->fetch_assoc();
 $stmt->close();
 
-if (!$cliente) {
-    header('Location: index.php?error=Cliente no encontrado');
+if (!$vehiculo) {
+    header('Location: index.php?error=Vehículo no encontrado');
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nombre = trim($_POST['nombre']);
-    $telefono = trim($_POST['telefono']);
-    $correo = trim($_POST['correo']);
-    $direccion = trim($_POST['direccion']);
-    $producto = trim($_POST['producto']);
-    $origen = trim($_POST['origen']);
+    $sucursal_id = trim($_POST['sucursal_id']);
+    $placa = trim($_POST['placa']);
+    $modelo = trim($_POST['modelo']);
+    $capacidad = trim($_POST['capacidad']);
+    $activo = isset($_POST['activo']) ? 1 : 0;
+    $notas = trim($_POST['notas']);
 
-    if (empty($nombre)) {
-        $mensaje = 'El nombre es requerido.';
+    if (empty($sucursal_id) || empty($placa) || empty($modelo)) {
+        $mensaje = 'Sucursal, placa y modelo son requeridos.';
         $es_error = true;
     } else {
-        // Actualizar el cliente incluyendo producto_suministra y origen
+        // Actualizar el vehículo
         $stmt = $conn->prepare("
-            UPDATE proveedores 
-            SET nombre = ?, telefono = ?, correo = ?, direccion = ?, producto_suministra = ?, origen = ?
+            UPDATE vehiculos
+            SET sucursal_id = ?, placa = ?, modelo = ?, capacidad = ?, activo = ?, notas = ?
             WHERE id = ?
         ");
-        // 7 strings y 1 entero (id)
-        $stmt->bind_param("ssssssi", $nombre, $telefono, $correo, $direccion, $producto, $origen, $id);
+        $stmt->bind_param("isssisi", $sucursal_id, $placa, $modelo, $capacidad, $activo, $notas, $id);
 
         if ($stmt->execute()) {
-            header('Location: index.php?success=Cliente actualizado exitosamente');
+            header('Location: index.php?success=Vehículo actualizado exitosamente');
             exit;
         } else {
             $mensaje = 'Error al actualizar: ' . $stmt->error;
@@ -65,7 +64,7 @@ $conn->close();
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Editar Proveedores - Hacienda Real</title>
+  <title>Editar Vehículo - Hacienda Real</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../compartido/componentes/cabecera/cabecera.css">
@@ -75,39 +74,53 @@ $conn->close();
 <body>
   <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Editar Proveedor", "proveedores");
+    cabecera("Editar Vehículo", "Vehiculos");
   ?>
 
   <main class="contenido">
     <form method="POST" class="formulario" id="formulario">
       <div class="campo">
-        <label for="nombre">Nombre *</label>
-        <input type="text" id="nombre" name="nombre" required value="<?php echo htmlspecialchars($cliente['nombre'] ?? ''); ?>">
+        <label for="sucursal_id">Sucursal *</label>
+        <select id="sucursal_id" name="sucursal_id" required>
+          <option value="">Selecciona una sucursal</option>
+          <?php
+          $conn = conectar();
+          $sql = "SELECT id, nombre FROM sucursales ORDER BY nombre";
+          $result = $conn->query($sql);
+          if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+              $selected = ($row['id'] == $vehiculo['sucursal_id']) ? 'selected' : '';
+              echo "<option value='" . $row['id'] . "' $selected>" . htmlspecialchars($row['nombre']) . "</option>";
+            }
+          }
+          $conn->close();
+          ?>
+        </select>
       </div>
 
       <div class="campo">
-        <label for="producto">Producto suministrado</label>
-        <input type="text" id="producto" name="producto" value="<?php echo htmlspecialchars($cliente['producto_suministra'] ?? ''); ?>">
+        <label for="placa">Placa *</label>
+        <input type="text" id="placa" name="placa" required value="<?php echo htmlspecialchars($vehiculo['placa'] ?? ''); ?>">
       </div>
 
       <div class="campo">
-        <label for="telefono">Teléfono</label>
-        <input type="text" id="telefono" name="telefono" value="<?php echo htmlspecialchars($cliente['telefono'] ?? ''); ?>">
+        <label for="modelo">Modelo *</label>
+        <input type="text" id="modelo" name="modelo" required value="<?php echo htmlspecialchars($vehiculo['modelo'] ?? ''); ?>">
       </div>
 
       <div class="campo">
-        <label for="correo">Correo</label>
-        <input type="email" id="correo" name="correo" value="<?php echo htmlspecialchars($cliente['correo'] ?? ''); ?>">
+        <label for="capacidad">Capacidad</label>
+        <input type="text" id="capacidad" name="capacidad" value="<?php echo htmlspecialchars($vehiculo['capacidad'] ?? ''); ?>">
       </div>
 
       <div class="campo">
-        <label for="origen">Origen</label>
-        <input type="text" id="origen" name="origen" value="<?php echo htmlspecialchars($cliente['origen'] ?? ''); ?>">
+        <label for="activo">Activo</label>
+        <input type="checkbox" id="activo" name="activo" <?php echo ($vehiculo['activo'] ? 'checked' : ''); ?>>
       </div>
 
       <div class="campo">
-        <label for="direccion">Dirección</label>
-        <textarea id="direccion" name="direccion"><?php echo htmlspecialchars($cliente['direccion'] ?? ''); ?></textarea>
+        <label for="notas">Notas</label>
+        <textarea id="notas" name="notas"><?php echo htmlspecialchars($vehiculo['notas'] ?? ''); ?></textarea>
       </div>
 
       <button type="button" id="btn-guardar" class="btn-guardar">Actualizar</button>
@@ -130,7 +143,7 @@ $conn->close();
     document.getElementById('btn-guardar').addEventListener('click', function() {
       Swal.fire({
         title: '¿Estás seguro?',
-        text: "Se actualizará el cliente con la información proporcionada",
+        text: "Se actualizará el vehículo con la información proporcionada",
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Sí, actualizar',

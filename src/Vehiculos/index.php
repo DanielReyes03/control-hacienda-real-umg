@@ -1,31 +1,12 @@
 <?php
-require_once "../login/check_adminEmple.php";
+require_once "../login/check_adminGer.php";
 ?>
 
-<?php
-// Configuración de la base de datos
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
-
-// Crear conexión
-$conn = new mysqli($host, $user, $password, $database);
-
-// Revisar conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
-
-// Manejo de mensajes de redirección
-$mensaje_success = $_GET['success'] ?? '';
-$mensaje_error = $_GET['error'] ?? '';
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Módulo de Clientes - Hacienda Real</title>
+  <title>Módulo de Vehículos - Hacienda Real</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../compartido/componentes/cabecera/cabecera.css">
@@ -35,7 +16,9 @@ $mensaje_error = $_GET['error'] ?? '';
 <body>
   <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Clientes");
+    include("../db/conexion.php");
+    cabecera("Vehículos");
+    $conn = conectar();
   ?>
 
   <main class="contenido">
@@ -47,30 +30,30 @@ $mensaje_error = $_GET['error'] ?? '';
       <table>
         <tr>
           <th>ID</th>
-          <th>DPI</th>
-          <th>Nombre</th>
-          <th>Teléfono</th>
-          <th>Correo</th>
-          <th>Dirección</th>
-          <th>Creado el</th>
+          <th>Sucursal</th>
+          <th>Placa</th>
+          <th>Modelo</th>
+          <th>Capacidad</th>
+          <th>Activo</th>
+          <th>Notas</th>
           <th>Acciones</th>
         </tr>
 
         <?php
-        $sql = "SELECT * FROM clientes ORDER BY id DESC";
+        $sql = "SELECT v.*, s.nombre AS sucursal_nombre FROM vehiculos v LEFT JOIN sucursales s ON v.sucursal_id = s.id ORDER BY v.id ASC";
         $resultado = $conn->query($sql);
 
         if ($resultado && $resultado->num_rows > 0) {
           while ($fila = $resultado->fetch_assoc()) {
-            $id = $fila['id']; // No htmlspecialchars para JS numérico
+            $id = htmlspecialchars($fila['id']);
             echo "<tr>
-                    <td>" . htmlspecialchars($id) . "</td>
-                    <td>" . htmlspecialchars($fila['dpi'] ?? '') . "</td>
-                    <td>" . htmlspecialchars($fila['nombre']) . "</td>
-                    <td>" . htmlspecialchars($fila['telefono'] ?? '') . "</td>
-                    <td>" . htmlspecialchars($fila['correo'] ?? '') . "</td>
-                    <td>" . htmlspecialchars($fila['direccion'] ?? '') . "</td>
-                    <td>" . ($fila['creado_en'] ? date('d/m/Y', strtotime($fila['creado_en'])) : '') . "</td>
+                    <td>" . $id . "</td>
+                    <td>" . htmlspecialchars($fila['sucursal_nombre'] ?? '') . "</td>
+                    <td>" . htmlspecialchars($fila['placa'] ?? '') . "</td>
+                    <td>" . htmlspecialchars($fila['modelo'] ?? '') . "</td>
+                    <td>" . htmlspecialchars($fila['capacidad'] ?? '') . "</td>
+                    <td>" . ($fila['activo'] ? 'Sí' : 'No') . "</td>
+                    <td>" . htmlspecialchars($fila['notas'] ?? '') . "</td>
                     <td class='acciones'>
                       <a href='#' class='boton-editar' onclick='alertaEditar(event, $id)'>Editar</a>
                       <a href='#' class='boton-eliminar' onclick='alertaEliminar(event, $id)'>Eliminar</a>
@@ -78,7 +61,7 @@ $mensaje_error = $_GET['error'] ?? '';
                   </tr>";
           }
         } else {
-          echo "<tr><td colspan=\"8\">No hay clientes registrados</td></tr>";
+          echo "<tr><td colspan=\"8\">No hay Vehículos registrados</td></tr>";
         }
         $conn->close();
         ?>
@@ -86,34 +69,12 @@ $mensaje_error = $_GET['error'] ?? '';
     </div>
   </main>
 
-  <?php if ($mensaje_success): ?>
   <script>
-    Swal.fire({
-      title: 'Éxito',
-      text: '<?php echo htmlspecialchars($mensaje_success); ?>',
-      icon: 'success',
-      confirmButtonText: 'OK'
-    });
-  </script>
-  <?php endif; ?>
-
-  <?php if ($mensaje_error): ?>
-  <script>
-    Swal.fire({
-      title: 'Error',
-      text: '<?php echo htmlspecialchars($mensaje_error); ?>',
-      icon: 'error',
-      confirmButtonText: 'OK'
-    });
-  </script>
-  <?php endif; ?>
-
-  <script>
-    // Alerta al crear nuevo cliente
+    // Alerta al crear nuevo vehículo
     function alertaCrear(event) {
       event.preventDefault();
       Swal.fire({
-        title: "¿Deseas crear un nuevo cliente?",
+        title: "¿Deseas crear un nuevo Vehículo?",
         icon: "question",
         showCancelButton: true,
         confirmButtonText: "Sí, crear",
@@ -122,7 +83,7 @@ $mensaje_error = $_GET['error'] ?? '';
         cancelButtonColor: "#d33"
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = "procesar_cliente.php";
+          window.location.href = "procesar_vehiculo.php";
         }
       });
     }
@@ -130,10 +91,9 @@ $mensaje_error = $_GET['error'] ?? '';
     // Alerta al editar
     function alertaEditar(event, id) {
       event.preventDefault();
-      console.log("ID para editar:", id); // Debug: verifica en consola F12
       Swal.fire({
-        title: "Editar cliente",
-        text: "¿Deseas modificar la información de este cliente?",
+        title: "Editar Vehículo",
+        text: "¿Deseas modificar la información de este vehículo?",
         icon: "info",
         showCancelButton: true,
         confirmButtonText: "Sí, editar",
@@ -142,7 +102,7 @@ $mensaje_error = $_GET['error'] ?? '';
         cancelButtonColor: "#d33"
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = "editar_cliente.php?id=" + id;
+          window.location.href = "editar_vehiculo.php?id=" + id;
         }
       });
     }
@@ -152,7 +112,7 @@ $mensaje_error = $_GET['error'] ?? '';
       event.preventDefault();
       Swal.fire({
         title: "¿Estás seguro?",
-        text: "Esta acción eliminará el cliente permanentemente.",
+        text: "Esta acción eliminará el Vehículo permanentemente.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sí, eliminar",
@@ -163,13 +123,13 @@ $mensaje_error = $_GET['error'] ?? '';
         if (result.isConfirmed) {
           Swal.fire({
             title: "Eliminado",
-            text: "El cliente ha sido eliminado correctamente.",
+            text: "El Vehículo ha sido eliminado correctamente.",
             icon: "success",
             timer: 1500,
             showConfirmButton: false
           });
           setTimeout(() => {
-            window.location.href = "eliminar_cliente.php?id=" + id;
+            window.location.href = "eliminar_vehiculo.php?id=" + id;
           }, 1500);
         }
       });
