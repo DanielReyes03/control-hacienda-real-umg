@@ -104,7 +104,7 @@
       gap: 15px;
       padding: 20px;
       max-width: 1100px;
-      height: 600px;
+      /* Removí height fija para que se expanda dinámicamente */
       margin: auto;
     }
 
@@ -114,6 +114,7 @@
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.15);
       max-height: 250px;
+      cursor: pointer; /* Cursor pointer para todos los items interactivos */
     }
 
     .grid-item img {
@@ -139,6 +140,20 @@
       font-weight: bold;
       font-size: 0.9rem;
     }
+
+    .clientes-centrado,
+    .reservaciones-centrado {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 40px; /* Espacio debajo del grid */
+    }
+
+    .grid-item.clientes,
+    .grid-item.reservaciones {
+      width: 300px;
+      height: 200px;
+    }
   </style>
 </head>
 <body>
@@ -160,44 +175,53 @@
   </header>
 
   <section class="grid-container">
-    <div class="grid-item" onclick="redirigir('../inventario/index.php')" style="cursor:pointer;">
-      <img src="../login/assets/img/pexels-tiger-lily-4483610.jpg" alt="Cafés">
+    <div class="grid-item" onclick="redirigir('../inventario/index.php')">
+      <img src="../login/assets/img/pexels-tiger-lily-4483610.jpg" alt="Inventario">
       <div class="overlay">INVENTARIO</div>
     </div>
-    <div class="grid-item">
-      <img src="../login/assets/img/pexels-cottonbro-4068314.jpg" alt="Viajes">
+    <div class="grid-item" onclick="redirigir('../compras/index.php')">
+      <img src="../login/assets/img/pexels-cottonbro-4068314.jpg" alt="Compras">
       <div class="overlay">COMPRAS</div>
     </div>
-    <div class="grid-item" onclick="redirigir('../Proveedores/index.php')" style="cursor:pointer;">>
-      <img src="../login/assets/img/pexels-artempodrez-5025489.jpg" alt="Lista Verde">
+    <div class="grid-item" onclick="redirigir('../Proveedores/index.php')">
+      <img src="../login/assets/img/pexels-artempodrez-5025489.jpg" alt="Proveedores">
       <div class="overlay">PROVEEDORES</div>
     </div>
-    <div class="grid-item">
-      <img src="../login/assets/img/pexels-olly-3760072.jpg" alt="Deco">
+    <div class="grid-item" onclick="redirigir('../ventas/index.php')">
+      <img src="../login/assets/img/pexels-olly-3760072.jpg" alt="Ventas">
       <div class="overlay">VENTAS</div>
     </div>
-    <div class="grid-item">
-      <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Diario">
+    <div class="grid-item" onclick="redirigir('../planilla/index.php')">
+      <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Planilla">
       <div class="overlay">PLANILLA</div>
     </div>
-    <div class="grid-item">
-      <img src="../login/assets/img/pexels-kampus-8931691.jpg" alt="Diario">
+    <div class="grid-item" onclick="redirigir('../servicio_domicilio/index.php')">
+      <img src="../login/assets/img/pexels-kampus-8931691.jpg" alt="Servicio Domicilio">
       <div class="overlay">SERVICIO DOMICILIO</div>
     </div>
-    <div class="grid-item" onclick="redirigir('../sucursales/index.php')" style="cursor:pointer;">
-      <img src="../login/assets/img/fondositio.jpg" alt="Diario">
+    <div class="grid-item sucursales" onclick="redirigir('../sucursales/index.php')">
+      <img src="../login/assets/img/fondositio.jpg" alt="Sucursales">
       <div class="overlay">SUCURSALES</div>
     </div>
-    <div class="grid-item" onclick="redirigir('../Vehiculos/index.php')" style="cursor:pointer;">
-      <img src="../login/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Diario">
+    <div class="grid-item" onclick="redirigir('../Vehiculos/index.php')">
+      <img src="../login/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Control de Vehículos">
       <div class="overlay">CONTROL DE VEHICULOS</div>
     </div>
   </section>
+  <div class="clientes-centrado">
+    <div class="grid-item clientes" onclick="redirigir('../clientes/index.php')">
+      <img src="../login/assets/img/clientes.jpg" alt="Clientes">
+      <div class="overlay">CLIENTES</div>
+    </div>
+  </div>
+
+
+
+  <script>
+    function redirigir(ruta) {
+      // Redirige directamente a la ruta que pases
+      window.location.href = ruta;
+    }
+  </script>
 </body>
 </html>
-<script>
-  function redirigir(ruta) {
-    // Redirige directamente a la ruta que pases
-    window.location.href = ruta;
-  }
-</script>
