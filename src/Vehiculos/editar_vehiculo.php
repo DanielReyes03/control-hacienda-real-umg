@@ -1,4 +1,5 @@
 <?php
+require_once "../login/check_adminGer.php";
 // Configuración de la base de datos
 include("../db/conexion.php");
 $conn = conectar();
