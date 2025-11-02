@@ -400,3 +400,22 @@ ALTER TABLE `alertas_stock` ADD FOREIGN KEY (`inventario_item_id`) REFERENCES `i
 ALTER TABLE `auditoria` ADD FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
 
 
+-- 🔐 Crea el usuario admin con una contraseña segura
+INSERT INTO usuarios (rol_id, usuario, contrasena_hash, nombre_completo, correo, telefono, creado_en)
+VALUES (
+  (SELECT id FROM roles WHERE nombre = 'Administrador'),
+  'admin_root',
+  '$2y$10$7kH5FzQso0ZWV21fYiykj.A68h7iA9kIKrKi2B.KOYAmClUVcex02',  -- Contraseña: 123456
+  'Administrador General del Sistema',
+  'admin@lahaciendareal.com',
+  '000-0000',
+  NOW()
+);
+
+
+INSERT INTO roles (nombre, descripcion) VALUES
+('Administrador', 'Tiene acceso completo a todas las secciones del sistema'),
+('Gerente', 'Acceso a reportes, planilla y ventas de su sucursal'),
+('Empleado', 'Acceso limitado a módulos de ventas y clientes'),
+('Repartidor', 'Acceso solo a domicilios y entregas'),
+('Cliente','Acceso solo al servicio a domicilio');

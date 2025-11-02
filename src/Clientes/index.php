@@ -1,4 +1,8 @@
 <?php
+require_once "../login/check_adminEmple.php";
+?>
+
+<?php
 // Configuración de la base de datos
 $host = 'db';
 $user = 'user';

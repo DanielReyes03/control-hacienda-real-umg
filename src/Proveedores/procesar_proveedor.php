@@ -1,4 +1,5 @@
 <?php
+require_once "../login/check_adminGer.php";
 include("../db/conexion.php");
 $conn = conectar();
 $mensaje = '';
