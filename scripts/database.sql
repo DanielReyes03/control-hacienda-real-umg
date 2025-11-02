@@ -48,6 +48,19 @@ CREATE TABLE `planilla` (
   `notas` text
 );
 
+INSERT INTO `puestos` (`nombre`, `descripcion`) VALUES
+('Gerente', 'Responsable general de la sucursal'),
+('Chef', 'Jefe de cocina'),
+('Mesero', 'Atención a clientes en sala'),
+('Repartidor', 'Entregas a domicilio'),
+('Cajero', 'Manejo de pagos y caja'),
+('Ayudante de Cocina', 'Apoyo en preparación');
+
+INSERT INTO empleados (puesto_id, nombres, apellidos, dpi, telefono, correo, salario, fecha_inicio, activo, creado_en) VALUES
+(1, 'Juan', 'Pérez García', '1234567890123', '+502 5550-1234', 'juan.perez@haciendareal.com', 2500.00, '2025-10-01', true, NOW()),
+(2, 'María', 'López Ramírez', '9876543210987', '+502 5550-5678', 'maria.lopez@haciendareal.com', 3500.00, '2025-09-15', true, NOW()),
+(3, 'Carlos', 'Ruiz Mendoza', '4567891234567', '+502 5550-9012', 'carlos.ruiz@haciendareal.com', 2200.00, '2025-11-01', true, NOW());
+
 CREATE TABLE `sucursales` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `nombre` varchar(150) NOT NULL,
@@ -132,16 +145,14 @@ CREATE TABLE `inventario_materias_primas` (
 CREATE TABLE `recetas` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `nombre` varchar(150) NOT NULL,
-  `descripcion` text NULL
+  `descripcion` text
 );
 
 CREATE TABLE `receta_detalle` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `receta_id` int NOT NULL,
   `materia_prima_id` int NOT NULL,
-  `cantidad` decimal(12,4) NOT NULL,
-    FOREIGN KEY (receta_id) REFERENCES recetas(id),
-    FOREIGN KEY (materia_prima_id) REFERENCES inventario_materias_primas(id)
+  `cantidad` decimal(12,4) NOT NULL
 );
 
 CREATE TABLE `movimientos_inventario` (
@@ -276,63 +287,72 @@ CREATE TABLE `auditoria` (
   `ip_origen` varchar(50) COMMENT 'IP desde donde se ejecutó la acción',
   `user_agent` varchar(255) COMMENT 'Dispositivo/Navegador usado',
   `detalle` text,
-  `creado_en` datetime DEFAULT (CURRENT_TIMESTAMP)
+  `creado_en` datetime DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE `usuarios` ADD FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`);
+-- 2. Agregar columna 'puesto' a 'planilla' (si no existe ya)
+ALTER TABLE `planilla` ADD COLUMN IF NOT EXISTS `puesto` VARCHAR(100) NOT NULL DEFAULT '' AFTER `empleado_id`;
 
-ALTER TABLE `empleados` ADD FOREIGN KEY (`puesto_id`) REFERENCES `puestos` (`id`);
+-- 3. Agregar todas las Foreign Keys con ALTER TABLE (en orden para evitar errores de dependencia)
 
-ALTER TABLE `planilla` ADD FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`);
+ALTER TABLE `usuarios` ADD CONSTRAINT `fk_usuarios_rol_id` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
-ALTER TABLE `sucursales` ADD FOREIGN KEY (`gerente_id`) REFERENCES `empleados` (`id`);
+ALTER TABLE `empleados` ADD CONSTRAINT `fk_empleados_puesto_id` FOREIGN KEY (`puesto_id`) REFERENCES `puestos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `mesas` ADD FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`);
+ALTER TABLE `planilla` ADD CONSTRAINT `fk_planilla_empleado_id` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
-ALTER TABLE `vehiculos` ADD FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`);
+ALTER TABLE `sucursales` ADD CONSTRAINT `fk_sucursales_gerente_id` FOREIGN KEY (`gerente_id`) REFERENCES `empleados` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `productos` ADD FOREIGN KEY (`categoria_id`) REFERENCES `categorias_productos` (`id`);
+ALTER TABLE `mesas` ADD CONSTRAINT `fk_mesas_sucursal_id` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `productos` ADD FOREIGN KEY (`receta_id`) REFERENCES `recetas` (`id`);
+ALTER TABLE `vehiculos` ADD CONSTRAINT `fk_vehiculos_sucursal_id` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `inventario_materias_primas` ADD FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`);
+ALTER TABLE `productos` ADD CONSTRAINT `fk_productos_categoria_id` FOREIGN KEY (`categoria_id`) REFERENCES `categorias_productos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `movimientos_inventario` ADD FOREIGN KEY (`inventario_mp_item_id`) REFERENCES `inventario_materias_primas` (`id`);
+ALTER TABLE `productos` ADD CONSTRAINT `fk_productos_receta_id` FOREIGN KEY (`receta_id`) REFERENCES `recetas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
-ALTER TABLE `compras` ADD FOREIGN KEY (`proveedor_id`) REFERENCES `proveedores` (`id`);
+ALTER TABLE `inventario_materias_primas` ADD CONSTRAINT `fk_inventario_sucursal_id` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
-ALTER TABLE `compras` ADD FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`);
+ALTER TABLE `receta_detalle` ADD CONSTRAINT `fk_receta_detalle_receta_id` FOREIGN KEY (`receta_id`) REFERENCES `recetas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `compras_detalle` ADD FOREIGN KEY (`compra_id`) REFERENCES `compras` (`id`);
+ALTER TABLE `receta_detalle` ADD CONSTRAINT `fk_receta_detalle_materia_prima_id` FOREIGN KEY (`materia_prima_id`) REFERENCES `inventario_materias_primas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
-ALTER TABLE `compras_detalle` ADD FOREIGN KEY (`materia_prima_id`) REFERENCES `inventario_materias_primas` (`id`);
+ALTER TABLE `movimientos_inventario` ADD CONSTRAINT `fk_movimientos_inventario_item_id` FOREIGN KEY (`inventario_mp_item_id`) REFERENCES `inventario_materias_primas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
-ALTER TABLE `compras_detalle` ADD FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`);
+ALTER TABLE `compras` ADD CONSTRAINT `fk_compras_proveedor_id` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedores` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `desperdicio` ADD FOREIGN KEY (`materia_prima_id`) REFERENCES `inventario_materias_primas` (`id`);
+ALTER TABLE `compras` ADD CONSTRAINT `fk_compras_sucursal_id` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `ventas` ADD FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`);
+ALTER TABLE `compras_detalle` ADD CONSTRAINT `fk_compras_detalle_compra_id` FOREIGN KEY (`compra_id`) REFERENCES `compras` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `ventas` ADD FOREIGN KEY (`mesa_id`) REFERENCES `mesas` (`id`);
+ALTER TABLE `compras_detalle` ADD CONSTRAINT `fk_compras_detalle_materia_prima_id` FOREIGN KEY (`materia_prima_id`) REFERENCES `inventario_materias_primas` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `ventas` ADD FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`);
+ALTER TABLE `compras_detalle` ADD CONSTRAINT `fk_compras_detalle_producto_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `ventas` ADD FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
+ALTER TABLE `desperdicio` ADD CONSTRAINT `fk_desperdicio_materia_prima_id` FOREIGN KEY (`materia_prima_id`) REFERENCES `inventario_materias_primas` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `ventas_detalle` ADD FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`);
+ALTER TABLE `ventas` ADD CONSTRAINT `fk_ventas_sucursal_id` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `ventas_detalle` ADD FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`);
+ALTER TABLE `ventas` ADD CONSTRAINT `fk_ventas_mesa_id` FOREIGN KEY (`mesa_id`) REFERENCES `mesas` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `ventas_pagos` ADD FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`);
+ALTER TABLE `ventas` ADD CONSTRAINT `fk_ventas_cliente_id` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `ventas_pagos` ADD FOREIGN KEY (`metodo_pago_id`) REFERENCES `metodos_pago` (`id`);
+ALTER TABLE `ventas` ADD CONSTRAINT `fk_ventas_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `domicilios` ADD FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`);
+ALTER TABLE `ventas_detalle` ADD CONSTRAINT `fk_ventas_detalle_venta_id` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `domicilios` ADD FOREIGN KEY (`vehiculo_id`) REFERENCES `vehiculos` (`id`);
+ALTER TABLE `ventas_detalle` ADD CONSTRAINT `fk_ventas_detalle_producto_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
-ALTER TABLE `domicilios` ADD FOREIGN KEY (`repartidor_id`) REFERENCES `empleados` (`id`);
+ALTER TABLE `ventas_pagos` ADD CONSTRAINT `fk_ventas_pagos_venta_id` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `alertas_stock` ADD FOREIGN KEY (`inventario_item_id`) REFERENCES `inventario_materias_primas` (`id`);
+ALTER TABLE `ventas_pagos` ADD CONSTRAINT `fk_ventas_pagos_metodo_id` FOREIGN KEY (`metodo_pago_id`) REFERENCES `metodos_pago` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `auditoria` ADD FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
+ALTER TABLE `domicilios` ADD CONSTRAINT `fk_domicilios_venta_id` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `domicilios` ADD CONSTRAINT `fk_domicilios_vehiculo_id` FOREIGN KEY (`vehiculo_id`) REFERENCES `vehiculos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE `domicilios` ADD CONSTRAINT `fk_domicilios_repartidor_id` FOREIGN KEY (`repartidor_id`) REFERENCES `empleados` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE `alertas_stock` ADD CONSTRAINT `fk_alertas_stock_item_id` FOREIGN KEY (`inventario_item_id`) REFERENCES `inventario_materias_primas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `auditoria` ADD CONSTRAINT `fk_auditoria_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
