@@ -279,6 +279,27 @@ CREATE TABLE `auditoria` (
   `creado_en` datetime DEFAULT (CURRENT_TIMESTAMP)
 );
 
+CREATE TABLE `reservaciones` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(50) NOT NULL,
+  `branch` varchar(255) NOT NULL,
+  `date` date NOT NULL,
+  `time` time NOT NULL,
+  `guests` int NOT NULL,
+  `comments` text,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insertar sucursales iniciales
+INSERT INTO sucursales (nombre) VALUES
+('Zona 10 (Sede Principal)'),
+('Zona 11 (Las Majadas)'),
+('Zona 14'),
+('Condado Concepcion'),
+('Dinamia Cayala');
+
 ALTER TABLE `usuarios` ADD FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`);
 
 ALTER TABLE `empleados` ADD FOREIGN KEY (`puesto_id`) REFERENCES `puestos` (`id`);
@@ -336,3 +357,5 @@ ALTER TABLE `domicilios` ADD FOREIGN KEY (`repartidor_id`) REFERENCES `empleados
 ALTER TABLE `alertas_stock` ADD FOREIGN KEY (`inventario_item_id`) REFERENCES `inventario_materias_primas` (`id`);
 
 ALTER TABLE `auditoria` ADD FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
+
+

@@ -188,7 +188,7 @@
       <img src="../login/assets/img/fondositio.jpg" alt="Diario">
       <div class="overlay">SUCURSALES</div>
     </div>
-    <div class="grid-item">
+    <div class="grid-item" onclick="redirigir('../Vehiculos/index.php')" style="cursor:pointer;">
       <img src="../login/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Diario">
       <div class="overlay">CONTROL DE VEHICULOS</div>
     </div>
