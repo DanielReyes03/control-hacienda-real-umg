@@ -1,3 +1,4 @@
+
 CREATE TABLE `roles` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `nombre` varchar(50) UNIQUE NOT NULL,

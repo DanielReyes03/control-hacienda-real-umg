@@ -1,4 +1,4 @@
-# docker-compose.yml
+# docker-compose.yml ARCHIVO DE CONFIGURACIÓN DE LOS CONTENEDORES
 version: '3.8'
 
 services:
