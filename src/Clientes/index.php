@@ -12,6 +12,10 @@ $conn = new mysqli($host, $user, $password, $database);
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
+
+// Manejo de mensajes de redirección
+$mensaje_success = $_GET['success'] ?? '';
+$mensaje_error = $_GET['error'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -54,9 +58,9 @@ if ($conn->connect_error) {
 
         if ($resultado && $resultado->num_rows > 0) {
           while ($fila = $resultado->fetch_assoc()) {
-            $id = htmlspecialchars($fila['id']);
+            $id = $fila['id']; // No htmlspecialchars para JS numérico
             echo "<tr>
-                    <td>" . $id . "</td>
+                    <td>" . htmlspecialchars($id) . "</td>
                     <td>" . htmlspecialchars($fila['dpi'] ?? '') . "</td>
                     <td>" . htmlspecialchars($fila['nombre']) . "</td>
                     <td>" . htmlspecialchars($fila['telefono'] ?? '') . "</td>
@@ -77,6 +81,28 @@ if ($conn->connect_error) {
       </table>
     </div>
   </main>
+
+  <?php if ($mensaje_success): ?>
+  <script>
+    Swal.fire({
+      title: 'Éxito',
+      text: '<?php echo htmlspecialchars($mensaje_success); ?>',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  </script>
+  <?php endif; ?>
+
+  <?php if ($mensaje_error): ?>
+  <script>
+    Swal.fire({
+      title: 'Error',
+      text: '<?php echo htmlspecialchars($mensaje_error); ?>',
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+  </script>
+  <?php endif; ?>
 
   <script>
     // Alerta al crear nuevo cliente
@@ -100,6 +126,7 @@ if ($conn->connect_error) {
     // Alerta al editar
     function alertaEditar(event, id) {
       event.preventDefault();
+      console.log("ID para editar:", id); // Debug: verifica en consola F12
       Swal.fire({
         title: "Editar cliente",
         text: "¿Deseas modificar la información de este cliente?",

@@ -16,7 +16,7 @@ $mensaje = '';
 $es_error = false;
 
 if ($id <= 0) {
-    header('Location: index.php?error=ID inválido');
+    header('Location: index.php?error=ID de cliente inválido');
     exit;
 }
 
@@ -40,10 +40,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $correo = trim($_POST['correo']);
     $direccion = trim($_POST['direccion']);
 
+    // Validaciones mejoradas
+    $errores = [];
     if (empty($nombre)) {
-        $mensaje = 'El nombre es requerido.';
-        $es_error = true;
-    } else {
+        $errores[] = 'El nombre es requerido.';
+    }
+    if (!empty($dpi) && (!is_numeric($dpi) || strlen($dpi) !== 13)) {
+        $errores[] = 'El DPI debe tener exactamente 13 dígitos numéricos.';
+    }
+    if (!empty($telefono) && (!is_numeric($telefono) || strlen($telefono) !== 8)) {
+        $errores[] = 'El teléfono debe tener exactamente 8 dígitos numéricos.';
+    }
+
+    if (empty($errores)) {
         $stmt = $conn->prepare("UPDATE clientes SET nombre = ?, dpi = ?, telefono = ?, correo = ?, direccion = ? WHERE id = ?");
         $stmt->bind_param("sssssi", $nombre, $dpi, $telefono, $correo, $direccion, $id);
         
@@ -51,10 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header('Location: index.php?success=Cliente actualizado exitosamente');
             exit;
         } else {
-            $mensaje = 'Error al actualizar: ' . $conn->error;
-            $es_error = true;
+            $errores[] = 'Error al actualizar: ' . $conn->error;
         }
         $stmt->close();
+    }
+
+    if (!empty($errores)) {
+        $mensaje = implode('<br>', $errores);
+        $es_error = true;
     }
 }
 $conn->close();
@@ -69,6 +82,11 @@ $conn->close();
   <link rel="stylesheet" href="../compartido/componentes/cabecera/cabecera.css">
   <link rel="stylesheet" href="./crear.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    /* Estilos inline para validaciones (agrega a crear.css si prefieres) */
+    .error { color: #d33; font-size: 0.9em; margin-top: 5px; display: none; }
+    input:invalid { border-color: #d33; }
+  </style>
 </head>
 <body>
   <?php
@@ -82,14 +100,17 @@ $conn->close();
       <div class="campo">
         <label for="nombre">Nombre *</label>
         <input type="text" id="nombre" name="nombre" required value="<?php echo htmlspecialchars($cliente['nombre'] ?? ''); ?>">
+        <div class="error" id="err-nombre">El nombre es requerido.</div>
       </div>
       <div class="campo">
-        <label for="dpi">DPI</label>
-        <input type="text" id="dpi" name="dpi" value="<?php echo htmlspecialchars($cliente['dpi'] ?? ''); ?>">
+        <label for="dpi">DPI (exactamente 13 dígitos)</label>
+        <input type="text" id="dpi" name="dpi" maxlength="13" pattern="[0-9]{13}" title="Solo números, exactamente 13 dígitos" value="<?php echo htmlspecialchars($cliente['dpi'] ?? ''); ?>">
+        <div class="error" id="err-dpi">El DPI debe tener exactamente 13 dígitos numéricos.</div>
       </div>
       <div class="campo">
-        <label for="telefono">Teléfono</label>
-        <input type="text" id="telefono" name="telefono" value="<?php echo htmlspecialchars($cliente['telefono'] ?? ''); ?>">
+        <label for="telefono">Teléfono (exactamente 8 dígitos)</label>
+        <input type="text" id="telefono" name="telefono" maxlength="8" pattern="[0-9]{8}" title="Solo números, exactamente 8 dígitos" value="<?php echo htmlspecialchars($cliente['telefono'] ?? ''); ?>">
+        <div class="error" id="err-telefono">El teléfono debe tener exactamente 8 dígitos numéricos.</div>
       </div>
       <div class="campo">
         <label for="correo">Correo</label>
@@ -116,19 +137,62 @@ $conn->close();
   <?php endif; ?>
 
   <script>
-    document.getElementById('btn-guardar').addEventListener('click', function() {
-      Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Se actualizará el cliente con la información proporcionada",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, actualizar',
-        cancelButtonText: 'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          document.getElementById('formulario').submit();
-        }
+    // Solo números en tiempo real
+    function soloNumeros(input) {
+      input.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
       });
+      input.addEventListener('keypress', function(e) {
+        if (!/[0-9]/.test(e.key)) e.preventDefault();
+      });
+    }
+
+    soloNumeros(document.getElementById('dpi'));
+    soloNumeros(document.getElementById('telefono'));
+
+    // Validación al submit
+    document.getElementById('formulario').addEventListener('submit', function(e) {
+      let valid = true;
+      const dpi = document.getElementById('dpi').value.trim();
+      const telefono = document.getElementById('telefono').value.trim();
+      const nombre = document.getElementById('nombre').value.trim();
+
+      if (!nombre) {
+        document.getElementById('err-nombre').style.display = 'block';
+        valid = false;
+      }
+      if (dpi && (dpi.length !== 13 || !/^\d{13}$/.test(dpi))) {
+        document.getElementById('err-dpi').style.display = 'block';
+        valid = false;
+      }
+      if (telefono && (telefono.length !== 8 || !/^\d{8}$/.test(telefono))) {
+        document.getElementById('err-telefono').style.display = 'block';
+        valid = false;
+      }
+
+      if (!valid) {
+        e.preventDefault();
+        Swal.fire('Error', 'Por favor corrige los campos indicados.', 'error');
+      }
+    });
+
+    document.getElementById('btn-guardar').addEventListener('click', function() {
+      // Validar antes de Swal
+      document.getElementById('formulario').dispatchEvent(new Event('submit'));
+      if (document.getElementById('formulario').checkValidity() && !document.querySelector('.error[style*="block"]')) {
+        Swal.fire({
+          title: '¿Estás seguro?',
+          text: "Se actualizará el cliente con la información proporcionada",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, actualizar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.getElementById('formulario').submit();
+          }
+        });
+      }
     });
 
     document.getElementById('btn-regresar').addEventListener('click', function() {
