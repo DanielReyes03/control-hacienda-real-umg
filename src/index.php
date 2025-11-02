@@ -189,7 +189,7 @@
     </div>
     <div class="grid-item" onclick="redirigir('../ventas/index.php')">
       <img src="../login/assets/img/pexels-olly-3760072.jpg" alt="Ventas">
-      <div class="overlay">VENTAS</div>
+      <div class="overlay">REPORTES</div>
     </div>
     <div class="grid-item" onclick="redirigir('../planilla/index.php')">
       <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Planilla">
