@@ -203,7 +203,7 @@
       <img src="../login/assets/img/fondositio.jpg" alt="Sucursales">
       <div class="overlay">SUCURSALES</div>
     </div>
-    <div class="grid-item" onclick="redirigir('../control_vehiculos/index.php')">
+    <div class="grid-item" onclick="redirigir('../Vehiculos/index.php')">
       <img src="../login/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Control de Vehículos">
       <div class="overlay">CONTROL DE VEHICULOS</div>
     </div>
