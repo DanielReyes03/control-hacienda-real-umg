@@ -195,7 +195,7 @@
       <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Planilla">
       <div class="overlay">PLANILLA</div>
     </div>
-    <div class="grid-item" onclick="redirigir('../servicio_domicilio/index.php')">
+    <div class="grid-item" onclick="redirigir('../compras/index.php')">
       <img src="../login/assets/img/pexels-kampus-8931691.jpg" alt="Servicio Domicilio">
       <div class="overlay">SERVICIO DOMICILIO</div>
     </div>
