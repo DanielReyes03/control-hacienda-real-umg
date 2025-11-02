@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../../../Tareas"
+		},
+		{
+			"path": "../../.."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "HaciendaReal"
+	}
+}

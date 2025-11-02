@@ -1,0 +1,113 @@
+:root {
+  --color-bg: #f3f0eb;
+  --color-card: #fff;
+  --color-accent: #7b2e2e; /* vino tinto */
+  --color-gold: #c99a3a;   /* dorado */
+  --radius: 14px;
+  --shadow: 0 6px 20px rgba(0,0,0,0.1);
+  --font: "Georgia", serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: linear-gradient(120deg, #fdfbf7, #f3f0eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-image: url('../assets/img/fondositio.jpg');
+  background-position: center;
+  background-size: cover;
+}
+
+.container {
+  background: var(--color-card);
+  padding: 40px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.header img {
+  width: 70px;
+  margin-bottom: 10px;
+}
+
+.header h1 {
+  color: var(--color-accent);
+  margin-bottom: 5px;
+}
+
+.slogan {
+  font-size: 14px;
+  color: var(--color-gold);
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.form-container {
+  margin-top: 10px;
+}
+
+.form-container.hidden {
+  display: none;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: var(--color-accent);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input, select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-family: var(--font);
+}
+
+button {
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: var(--radius);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: var(--color-gold);
+}
+
+p {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #444;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:hover {
+  color: var(--color-gold);
+}
