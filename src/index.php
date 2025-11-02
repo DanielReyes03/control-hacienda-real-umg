@@ -164,10 +164,10 @@
       <img src="../login/assets/img/pexels-tiger-lily-4483610.jpg" alt="Cafés">
       <div class="overlay">INVENTARIO</div>
     </div>
-    <div class="grid-item">
-      <img src="../login/assets/img/pexels-cottonbro-4068314.jpg" alt="Viajes">
+     <div class="grid-item">
+      <img src="../login/assets/img/pexels-cottonbro-4068314.jpg" alt="Compras">
       <div class="overlay">COMPRAS</div>
-    </div>
+   </div>
     <div class="grid-item" onclick="redirigir('../Proveedores/index.php')" style="cursor:pointer;">>
       <img src="../login/assets/img/pexels-artempodrez-5025489.jpg" alt="Lista Verde">
       <div class="overlay">PROVEEDORES</div>
@@ -180,7 +180,7 @@
       <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Diario">
       <div class="overlay">PLANILLA</div>
     </div>
-    <div class="grid-item">
+    <div class="grid-item" onclick="redirigir('../compras/index.php')" style="cursor:pointer;">
       <img src="../login/assets/img/pexels-kampus-8931691.jpg" alt="Diario">
       <div class="overlay">SERVICIO DOMICILIO</div>
     </div>
