@@ -94,6 +94,7 @@ CREATE TABLE `proveedores` (
   `correo` varchar(150),
   `producto_suministra` varchar(255),
   `direccion` varchar(255),
+  `origen` varchar(50),
   `creado_en` datetime
 );
 
@@ -131,8 +132,17 @@ CREATE TABLE `inventario_materias_primas` (
 
 CREATE TABLE `recetas` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre` varchar(150) NOT NULL,
+  `descripcion` text NULL
+);
+
+CREATE TABLE `receta_detalle` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `receta_id` int NOT NULL,
   `materia_prima_id` int NOT NULL,
-  `cantidad` decimal(12,4) NOT NULL
+  `cantidad` decimal(12,4) NOT NULL,
+    FOREIGN KEY (receta_id) REFERENCES recetas(id),
+    FOREIGN KEY (materia_prima_id) REFERENCES inventario_materias_primas(id)
 );
 
 CREATE TABLE `movimientos_inventario` (
@@ -270,6 +280,27 @@ CREATE TABLE `auditoria` (
   `creado_en` datetime DEFAULT (CURRENT_TIMESTAMP)
 );
 
+CREATE TABLE `reservaciones` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(50) NOT NULL,
+  `branch` varchar(255) NOT NULL,
+  `date` date NOT NULL,
+  `time` time NOT NULL,
+  `guests` int NOT NULL,
+  `comments` text,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insertar sucursales iniciales
+INSERT INTO sucursales (nombre) VALUES
+('Zona 10 (Sede Principal)'),
+('Zona 11 (Las Majadas)'),
+('Zona 14'),
+('Condado Concepcion'),
+('Dinamia Cayala');
+
 ALTER TABLE `usuarios` ADD FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`);
 
 ALTER TABLE `empleados` ADD FOREIGN KEY (`puesto_id`) REFERENCES `puestos` (`id`);
@@ -287,8 +318,6 @@ ALTER TABLE `productos` ADD FOREIGN KEY (`categoria_id`) REFERENCES `categorias_
 ALTER TABLE `productos` ADD FOREIGN KEY (`receta_id`) REFERENCES `recetas` (`id`);
 
 ALTER TABLE `inventario_materias_primas` ADD FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`);
-
-ALTER TABLE `recetas` ADD FOREIGN KEY (`materia_prima_id`) REFERENCES `inventario_materias_primas` (`id`);
 
 ALTER TABLE `movimientos_inventario` ADD FOREIGN KEY (`inventario_mp_item_id`) REFERENCES `inventario_materias_primas` (`id`);
 
@@ -329,3 +358,5 @@ ALTER TABLE `domicilios` ADD FOREIGN KEY (`repartidor_id`) REFERENCES `empleados
 ALTER TABLE `alertas_stock` ADD FOREIGN KEY (`inventario_item_id`) REFERENCES `inventario_materias_primas` (`id`);
 
 ALTER TABLE `auditoria` ADD FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
+
+
