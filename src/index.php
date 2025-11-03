@@ -222,7 +222,7 @@ if (!isset($_SESSION['usuario_id'])) {
       <div class="overlay">VENTAS</div>
     </div>
 
-    <div class="grid-item" onclick="redirigir('../planilla/index.php')">
+    <div class="grid-item" onclick="redirigir('../Planilla/index.php')">
       <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Planilla">
       <div class="overlay">PLANILLA</div>
     </div>

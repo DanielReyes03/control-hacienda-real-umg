@@ -1,0 +1,122 @@
+/* Fuente y colores base */
+:root {
+    --rojo: #E15B65;
+    --amarillo: #FF9902;
+    --negro: #1E1E1E;
+    --blanco: #FFFFFF;
+  }
+  
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--blanco);
+    color: var(--negro);
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Contenido principal */
+  .contenido {
+    padding: 40px;
+  }
+  
+  /* Botón Crear */
+  .acciones {
+    text-align: right;
+    margin-bottom: 20px;
+  }
+  
+  .btn-crear {
+    background-color: var(--amarillo);
+    color: var(--blanco);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-crear:hover {
+    background-color: #e28700;
+  }
+  
+  /* Tabla */
+  .tabla-contenedor {
+    background-color: var(--blanco);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th {
+    background-color: var(--rojo);
+    color: var(--blanco);
+    padding: 12px;
+    text-align: center;
+    border-bottom: 2px solid var(--amarillo);
+  }
+  
+  td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  tr:hover {
+    background-color: #fff6f7;
+  }
+  
+  /* Botones de acción */
+  .boton-editar, .boton-eliminar {
+    text-decoration: none;
+    color: var(--blanco);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0 4px;
+  }
+  
+  .boton-editar {
+    background-color: #3c8c47;
+  }
+  
+  .boton-editar:hover {
+    background-color: #2f6f38;
+  }
+  
+  .boton-eliminar {
+    background-color: #b23b3b;
+  }
+  
+  .boton-eliminar:hover {
+    background-color: #922c2c;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .encabezado h1 {
+      font-size: 2.5rem;
+    }
+    .contenido {
+      padding: 20px;
+    }
+    table {
+      font-size: 14px;
+    }
+  }
+  
+  
+  .btn-regresar {
+    background-color: var(--amarillo);
+    color: var(--blanco);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
