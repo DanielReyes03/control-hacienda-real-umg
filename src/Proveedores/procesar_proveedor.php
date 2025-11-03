@@ -58,7 +58,7 @@ $conn->close();
 <body>
 <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Crear Nuevo Proveedor", "proveedores");
+    cabecera("Crear Nuevo Proveedor", "index.php");
 ?>
   <main class="contenido">
     <form method="POST" class="formulario" id="formulario">

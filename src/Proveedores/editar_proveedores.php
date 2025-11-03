@@ -1,5 +1,5 @@
 <?php
-require_once "../login/check_admin.php";
+require_once "../login/check_adminGer.php";
 // Configuración de la base de datos
 include("../db/conexion.php");
 $conn = conectar();
@@ -75,7 +75,7 @@ $conn->close();
 <body>
   <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Editar Proveedor", "proveedores");
+    cabecera("Editar Proveedor", "index.php");
   ?>
 
   <main class="contenido">

@@ -226,8 +226,8 @@ if (!isset($_SESSION['usuario_id'])) {
     </div>
 
     <div class="grid-item" onclick="redirigir('../login/admin_usuarios.php')">
-      <img src="../login/assets/img/pexels-cottonbro-4068314.jpg" alt="Compras">
-      <div class="overlay">COMPRAS</div>
+      <img src="../login/assets/img/pexels-shkrabaanthony-5475750.jpg" alt="Compras">
+      <div class="overlay">USUARIOS</div>
     </div>
 
     <div class="grid-item" onclick="redirigir('../Proveedores/index.php')">
@@ -240,7 +240,7 @@ if (!isset($_SESSION['usuario_id'])) {
       <div class="overlay">REPORTES</div>
     </div>
 
-    <div class="grid-item" onclick="redirigir('../planilla/index.php')">
+    <div class="grid-item" onclick="redirigir('../Planilla/index.php')">
       <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Planilla">
       <div class="overlay">PLANILLA</div>
     </div>
