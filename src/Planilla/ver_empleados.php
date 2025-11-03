@@ -1,4 +1,7 @@
 <?php
+// ver_empleados.php - Lista de empleados (versión corregida para deprecaciones de null en htmlspecialchars)
+// Coloca este archivo en /var/www/html/planilla/ para ver empleados: http://tu-servidor/planilla/ver_empleados.php
+
 // Configuración de la base de datos
 $host = 'db';
 $user = 'user';
@@ -21,7 +24,7 @@ $mensaje_error = $_GET['error'] ?? '';
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Módulo de Planillas - Hacienda Real</title>
+  <title>Módulo de Empleados - Hacienda Real</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../compartido/componentes/cabecera/cabecera.css">
@@ -31,50 +34,60 @@ $mensaje_error = $_GET['error'] ?? '';
 <body>
   <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Planillas");
+    cabecera("Empleados");
   ?>
 
   <main class="contenido">
     <div class="acciones">
-      <a href="procesar_planilla.php" class="btn-crear" onclick="alertaCrear(event)">Crear Nueva</a>
-      <a href="procesar_empleado.php" class="btn-crear" onclick="alertaCrearEmpleado(event)">Crear Nuevo Empleado</a>
-      <a href="ver_empleados.php" class="btn-crear" onclick="alertaVerEmpleados(event)">Ver Empleados</a>
+      <a href="procesar_empleado.php" class="btn-crear" onclick="alertaCrear(event)">Crear Nuevo Empleado</a>
+      <a href="index.php" class="btn-regresar">Regresar a Planillas</a>
     </div>
 
     <div class="tabla-contenedor">
       <table>
         <tr>
           <th>ID</th>
-          <th>Empleado ID</th>
+          <th>Nombre Completo</th>
+          <th>Cédula/DPI</th>
           <th>Puesto</th>
-          <th>Período Inicio</th>
-          <th>Período Fin</th>
-          <th>Sueldo Bruto</th>
-          <th>Deducciones</th>
-          <th>Sueldo Neto</th>
-          <th>Fecha Pago</th>
+          <th>Salario</th>
+          <th>Fecha Inicio</th>
+          <th>Teléfono</th>
+          <th>Correo</th>
+          <th>Estado</th>
           <th>Notas</th>
           <th>Acciones</th>
         </tr>
 
         <?php
-        $sql = "SELECT * FROM planilla ORDER BY id DESC";
+        // Consulta para mostrar empleados (usa 'nombre' concatenado, 'dpi' para cédula, etc.)
+        // Muestra todos, pero puedes filtrar solo activos agregando WHERE activo = 1
+        $sql = "SELECT id, nombre, dpi AS cedula, puesto, salario, fecha_inicio, telefono, correo, activo, notas 
+                FROM empleados 
+                ORDER BY id DESC";
         $resultado = $conn->query($sql);
 
         if ($resultado && $resultado->num_rows > 0) {
           while ($fila = $resultado->fetch_assoc()) {
-            $id = $fila['id']; // No htmlspecialchars para JS numérico
+            $id = $fila['id'];
+            $estado = ($fila['activo'] ?? 0) ? 'Activo' : 'Inactivo';
+            $puesto = $fila['puesto'] ?? 'No especificado';
+            $salario = $fila['salario'] ?? 0;
+            $fecha_inicio = $fila['fecha_inicio'] ?? '';
+            $telefono = $fila['telefono'] ?? '';
+            $correo = $fila['correo'] ?? '';
+            $notas = $fila['notas'] ?? '';
             echo "<tr>
                     <td>" . htmlspecialchars($id) . "</td>
-                    <td>" . htmlspecialchars($fila['empleado_id']) . "</td>
-                    <td>" . htmlspecialchars($fila['puesto']) . "</td>
-                    <td>" . ($fila['periodo_inicio'] ? date('d/m/Y', strtotime($fila['periodo_inicio'])) : '') . "</td>
-                    <td>" . ($fila['periodo_fin'] ? date('d/m/Y', strtotime($fila['periodo_fin'])) : '') . "</td>
-                    <td>" . htmlspecialchars(number_format($fila['sueldo_bruto'], 2)) . "</td>
-                    <td>" . htmlspecialchars(number_format($fila['deducciones'], 2)) . "</td>
-                    <td>" . htmlspecialchars(number_format($fila['sueldo_neto'], 2)) . "</td>
-                    <td>" . ($fila['fecha_pago'] ? date('d/m/Y', strtotime($fila['fecha_pago'])) : '') . "</td>
-                    <td>" . htmlspecialchars(substr($fila['notas'] ?? '', 0, 50) . (strlen($fila['notas'] ?? '') > 50 ? '...' : '')) . "</td>
+                    <td>" . htmlspecialchars($fila['nombre'] ?? '') . "</td>
+                    <td>" . htmlspecialchars($fila['cedula'] ?? '') . "</td>
+                    <td>" . htmlspecialchars($puesto) . "</td>
+                    <td>" . htmlspecialchars(number_format($salario, 2)) . "</td>
+                    <td>" . ($fecha_inicio ? date('d/m/Y', strtotime($fecha_inicio)) : '') . "</td>
+                    <td>" . htmlspecialchars($telefono) . "</td>
+                    <td>" . htmlspecialchars($correo) . "</td>
+                    <td><span class='estado " . (($fila['activo'] ?? 0) ? 'success' : 'warning') . "'>" . $estado . "</span></td>
+                    <td>" . htmlspecialchars(substr($notas, 0, 30) . (strlen($notas) > 30 ? '...' : '')) . "</td>
                     <td class='acciones'>
                       <a href='#' class='boton-editar' onclick='alertaEditar(event, $id)'>Editar</a>
                       <a href='#' class='boton-eliminar' onclick='alertaEliminar(event, $id)'>Eliminar</a>
@@ -82,7 +95,7 @@ $mensaje_error = $_GET['error'] ?? '';
                   </tr>";
           }
         } else {
-          echo "<tr><td colspan=\"11\">No hay planillas registradas</td></tr>";
+          echo "<tr><td colspan=\"11\">No hay empleados registrados</td></tr>";
         }
         $conn->close();
         ?>
@@ -113,26 +126,8 @@ $mensaje_error = $_GET['error'] ?? '';
   <?php endif; ?>
 
   <script>
-    // Alerta al crear nueva planilla
-    function alertaCrear(event) {
-      event.preventDefault();
-      Swal.fire({
-        title: "¿Deseas crear una nueva planilla?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Sí, crear",
-        cancelButtonText: "Cancelar",
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = "procesar_planilla.php";
-        }
-      });
-    }
-
     // Alerta al crear nuevo empleado
-    function alertaCrearEmpleado(event) {
+    function alertaCrear(event) {
       event.preventDefault();
       Swal.fire({
         title: "¿Deseas crear un nuevo empleado?",
@@ -149,31 +144,12 @@ $mensaje_error = $_GET['error'] ?? '';
       });
     }
 
-    // Alerta al ver empleados
-    function alertaVerEmpleados(event) {
-      event.preventDefault();
-      Swal.fire({
-        title: "¿Deseas ver la lista de empleados?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Sí, ver",
-        cancelButtonText: "Cancelar",
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = "ver_empleados.php";
-        }
-      });
-    }
-
     // Alerta al editar
     function alertaEditar(event, id) {
       event.preventDefault();
-      console.log("ID para editar:", id); // Debug: verifica en consola F12
       Swal.fire({
-        title: "Editar planilla",
-        text: "¿Deseas modificar la información de esta planilla?",
+        title: "Editar empleado",
+        text: "¿Deseas modificar la información de este empleado?",
         icon: "info",
         showCancelButton: true,
         confirmButtonText: "Sí, editar",
@@ -182,7 +158,7 @@ $mensaje_error = $_GET['error'] ?? '';
         cancelButtonColor: "#d33"
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = "editar_planilla.php?id=" + id;
+          window.location.href = "editar_empleado.php?id=" + id;
         }
       });
     }
@@ -192,7 +168,7 @@ $mensaje_error = $_GET['error'] ?? '';
       event.preventDefault();
       Swal.fire({
         title: "¿Estás seguro?",
-        text: "Esta acción eliminará la planilla permanentemente.",
+        text: "Esta acción eliminará el empleado permanentemente. ¿Continuar?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sí, eliminar",
@@ -203,13 +179,13 @@ $mensaje_error = $_GET['error'] ?? '';
         if (result.isConfirmed) {
           Swal.fire({
             title: "Eliminado",
-            text: "La planilla ha sido eliminada correctamente.",
+            text: "El empleado ha sido eliminado correctamente.",
             icon: "success",
             timer: 1500,
             showConfirmButton: false
           });
           setTimeout(() => {
-            window.location.href = "eliminar_planilla.php?id=" + id;
+            window.location.href = "eliminar_empleado.php?id=" + id;
           }, 1500);
         }
       });

@@ -13,6 +13,41 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+// Manejo de AJAX: Fetch empleado si se solicita
+if (isset($_GET['fetch_employee']) && !empty($_GET['fetch_employee'])) {
+    $empleado_id = intval($_GET['fetch_employee']);
+    $sql = "SELECT nombre, puesto, salario, fecha_inicio FROM empleados WHERE id = ? AND activo = 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $empleado_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $empleado = $result->fetch_assoc();
+        // Calcular periodo sugerido basado en fecha_inicio (ej: mes actual)
+        $periodo_inicio = date('Y-m-01'); // Primer día del mes actual
+        $periodo_fin = date('Y-m-t');     // Último día del mes actual
+        $fecha_pago = date('Y-m-d', strtotime('+1 day')); // Sugerir pago mañana
+        
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                'nombre' => $empleado['nombre'],
+                'puesto' => $empleado['puesto'],
+                'sueldo_bruto' => $empleado['salario'],
+                'periodo_inicio' => $periodo_inicio,
+                'periodo_fin' => $periodo_fin,
+                'fecha_pago' => $fecha_pago
+            ]
+        ]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Empleado no encontrado o inactivo.']);
+    }
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+
 // Manejo de formulario
 $mensaje_success = '';
 $mensaje_error = '';
@@ -55,8 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($stmt->execute()) {
                     $mensaje_success = 'Planilla creada exitosamente.';
-                    // Limpiar formulario
-                    $_POST = array();
+                    header("Location: index.php?success=" . urlencode($mensaje_success));
+                    exit();
                 } else {
                     throw new Exception("Error en execute: " . $stmt->error);
                 }
@@ -113,12 +148,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <!-- Tip para el usuario sobre empleados -->
       <div style="background-color: #fff3cd; color: #856404; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 0.9em;">
-        <strong>Tip:</strong> Usa un ID de empleado existente (verifícalo en el módulo de Empleados).
+        <strong>Tip:</strong> Ingresa el ID de empleado. Los campos se autocompletarán automáticamente (puesto, sueldo, período, etc.).
       </div>
 
       <div style="margin-bottom: 20px;">
         <label for="empleado_id" style="display: block; margin-bottom: 5px; font-weight: 600;">ID Empleado:</label>
-        <input type="number" id="empleado_id" name="empleado_id" value="<?php echo htmlspecialchars($_POST['empleado_id'] ?? ''); ?>" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;">
+        <input type="number" id="empleado_id" name="empleado_id" value="<?php echo htmlspecialchars($_POST['empleado_id'] ?? ''); ?>" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;" placeholder="Ej: 1">
+        <div id="info_empleado" style="margin-top: 5px; font-size: 0.9em; color: #666; font-style: italic;"></div>
       </div>
 
       <div style="margin-bottom: 20px;">
@@ -168,6 +204,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </main>
 
   <script>
+    // Auto-fill al cambiar ID de empleado
+    document.getElementById('empleado_id').addEventListener('blur', fetchEmpleado);
+    document.getElementById('empleado_id').addEventListener('change', fetchEmpleado); // También en change por si usan enter
+
+    function fetchEmpleado() {
+      const idInput = document.getElementById('empleado_id');
+      const id = parseInt(idInput.value);
+      const infoDiv = document.getElementById('info_empleado');
+
+      if (id <= 0) {
+        infoDiv.innerHTML = '';
+        return;
+      }
+
+      // Mostrar loading
+      infoDiv.innerHTML = 'Cargando datos del empleado...';
+
+      // AJAX request
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `?fetch_employee=${id}`, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+              // Llenar campos
+              document.getElementById('puesto').value = response.data.puesto;
+              document.getElementById('sueldo_bruto').value = response.data.sueldo_bruto;
+              document.getElementById('periodo_inicio').value = response.data.periodo_inicio;
+              document.getElementById('periodo_fin').value = response.data.periodo_fin;
+              document.getElementById('fecha_pago').value = response.data.fecha_pago;
+
+              // Actualizar neto
+              calcularNeto();
+
+              // Mostrar info
+              infoDiv.innerHTML = `<strong>Empleado:</strong> ${response.data.nombre} | <strong>Puesto:</strong> ${response.data.puesto}`;
+              infoDiv.style.color = '#28a745'; // Verde para éxito
+            } else {
+              infoDiv.innerHTML = response.message;
+              infoDiv.style.color = '#dc3545'; // Rojo para error
+              // Limpiar campos si error
+              document.getElementById('puesto').value = '';
+              document.getElementById('sueldo_bruto').value = '';
+              calcularNeto();
+            }
+          } else {
+            infoDiv.innerHTML = 'Error al cargar datos. Verifica la conexión.';
+            infoDiv.style.color = '#dc3545';
+          }
+        }
+      };
+      xhr.send();
+    }
+
     // Actualizar sueldo neto en tiempo real
     document.getElementById('sueldo_bruto').addEventListener('input', calcularNeto);
     document.getElementById('deducciones').addEventListener('input', calcularNeto);
@@ -177,15 +268,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       const deducciones = parseFloat(document.getElementById('deducciones').value) || 0;
       document.getElementById('sueldo_neto').value = (bruto - deducciones).toFixed(2);
     }
-
-    <?php if ($mensaje_success): ?>
-    Swal.fire({
-      title: 'Éxito',
-      text: '<?php echo htmlspecialchars($mensaje_success); ?>',
-      icon: 'success',
-      confirmButtonText: 'OK'
-    });
-    <?php endif; ?>
 
     <?php if ($mensaje_error): ?>
     Swal.fire({

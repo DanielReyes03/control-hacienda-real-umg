@@ -48,19 +48,6 @@ CREATE TABLE `planilla` (
   `notas` text
 );
 
-INSERT INTO `puestos` (`nombre`, `descripcion`) VALUES
-('Gerente', 'Responsable general de la sucursal'),
-('Chef', 'Jefe de cocina'),
-('Mesero', 'Atención a clientes en sala'),
-('Repartidor', 'Entregas a domicilio'),
-('Cajero', 'Manejo de pagos y caja'),
-('Ayudante de Cocina', 'Apoyo en preparación');
-
-INSERT INTO empleados (puesto_id, nombres, apellidos, dpi, telefono, correo, salario, fecha_inicio, activo, creado_en) VALUES
-(1, 'Juan', 'Pérez García', '1234567890123', '+502 5550-1234', 'juan.perez@haciendareal.com', 2500.00, '2025-10-01', true, NOW()),
-(2, 'María', 'López Ramírez', '9876543210987', '+502 5550-5678', 'maria.lopez@haciendareal.com', 3500.00, '2025-09-15', true, NOW()),
-(3, 'Carlos', 'Ruiz Mendoza', '4567891234567', '+502 5550-9012', 'carlos.ruiz@haciendareal.com', 2200.00, '2025-11-01', true, NOW());
-
 CREATE TABLE `sucursales` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `nombre` varchar(150) NOT NULL,
