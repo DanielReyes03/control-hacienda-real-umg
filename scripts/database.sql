@@ -344,3 +344,24 @@ ALTER TABLE `domicilios` ADD CONSTRAINT `fk_domicilios_repartidor_id` FOREIGN KE
 ALTER TABLE `alertas_stock` ADD CONSTRAINT `fk_alertas_stock_item_id` FOREIGN KEY (`inventario_item_id`) REFERENCES `inventario_materias_primas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `auditoria` ADD CONSTRAINT `fk_auditoria_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+
+INSERT INTO usuarios (rol_id, usuario, contrasena_hash, nombre_completo, correo, telefono, creado_en)
+VALUES (
+  (SELECT id FROM roles WHERE nombre = 'Administrador'),
+  'admin_root',
+  '$2y$10$7kH5FzQso0ZWV21fYiykj.A68h7iA9kIKrKi2B.KOYAmClUVcex02',  -- Contraseña: 123456
+  'Administrador General del Sistema',
+  'admin@lahaciendareal.com',
+  '000-0000',
+  NOW()
+);
+
+
+
+INSERT INTO roles (nombre, descripcion) VALUES
+('Administrador', 'Tiene acceso completo a todas las secciones del sistema'),
+('Gerente', 'Acceso a reportes, planilla y ventas de su sucursal'),
+('Empleado', 'Acceso limitado a módulos de ventas y clientes'),
+('Repartidor', 'Acceso solo a domicilios y entregas'),
+('Cliente','Acceso solo al servicio a domicilio');

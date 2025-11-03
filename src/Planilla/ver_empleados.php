@@ -1,4 +1,5 @@
 <?php
+require_once "../login/check_adminEmple.php";
 // ver_empleados.php - Lista de empleados (versión corregida para deprecaciones de null en htmlspecialchars)
 // Coloca este archivo en /var/www/html/planilla/ para ver empleados: http://tu-servidor/planilla/ver_empleados.php
 
@@ -62,7 +63,7 @@ $mensaje_error = $_GET['error'] ?? '';
         <?php
         // Consulta para mostrar empleados (usa 'nombre' concatenado, 'dpi' para cédula, etc.)
         // Muestra todos, pero puedes filtrar solo activos agregando WHERE activo = 1
-        $sql = "SELECT id, nombre, dpi AS cedula, puesto, salario, fecha_inicio, telefono, correo, activo, notas 
+        $sql = "SELECT id, nombres, dpi AS cedula, puesto, salario, fecha_inicio, telefono, correo, activo, notas 
                 FROM empleados 
                 ORDER BY id DESC";
         $resultado = $conn->query($sql);

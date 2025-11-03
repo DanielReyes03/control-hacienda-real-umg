@@ -1,4 +1,5 @@
 <?php
+require_once "../login/check_adminGer.php";
 // editar_empleado.php - Formulario para editar un empleado existente
 // Carga datos por ID, permite edición y actualiza en DB
 

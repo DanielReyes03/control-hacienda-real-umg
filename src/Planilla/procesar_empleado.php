@@ -1,4 +1,5 @@
 <?php
+require_once "../login/check_adminGer.php";
 // procesar_empleado.php - Versión CORREGIDA para campos requeridos NOT NULL
 // Incluye 'nombres', 'apellidos', 'dpi' en INSERT (mapea desde input)
 // Asume split simple de 'nombre': primera palabra a 'nombres', resto a 'apellidos'

@@ -1,4 +1,6 @@
 <?php
+
+require_once "../login/check_admin.php";
 // eliminar_planilla.php - Elimina una planilla por ID y redirige a index.php
 
 // Configuración de la base de datos

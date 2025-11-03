@@ -1,4 +1,6 @@
 <?php
+
+require_once "../login/check_admin.php";
 // eliminar_empleado.php - Elimina un empleado por ID y redirige a ver_empleados.php
 // CORREGIDO: Primero elimina planillas relacionadas (manual cascade), luego el empleado
 
