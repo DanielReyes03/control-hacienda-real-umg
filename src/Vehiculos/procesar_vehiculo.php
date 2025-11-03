@@ -1,5 +1,6 @@
 <?php
 include("../db/conexion.php");
+require_once "../login/check_adminGer.php";
 $conn = conectar();
 $mensaje = '';
 $es_error = false;
@@ -65,7 +66,7 @@ $conn->close();
 <body>
 <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Crear Nuevo Vehículo", "Vehiculos");
+    cabecera("Crear Nuevo Vehículo", "index.php");
 ?>
   <main class="contenido">
     <form method="POST" class="formulario" id="formulario">

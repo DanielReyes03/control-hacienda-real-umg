@@ -1,5 +1,5 @@
 <?php
-require_once "../login/check_adminGer.php";
+require_once "../login/check_admin.php";
 include("../db/conexion.php");
 $conn = conectar();
 $id = intval($_GET['id'] ?? 0);

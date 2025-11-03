@@ -74,7 +74,7 @@ $conn->close();
 <body>
   <?php
     include("../compartido/componentes/cabecera/index.php");
-    cabecera("Editar Vehículo", "Vehiculos");
+    cabecera("Editar Vehículo", "index.php");
   ?>
 
   <main class="contenido">

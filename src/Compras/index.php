@@ -1,3 +1,6 @@
+<?php
+require_once "../login/check_adminclient.php"; 
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
