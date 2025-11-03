@@ -73,6 +73,7 @@
       </div>
     </div>
   </section>
+  
 
   <!-- Librerías -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
