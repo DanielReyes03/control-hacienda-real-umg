@@ -175,7 +175,6 @@ if (!isset($_SESSION['usuario_id'])) {
   </style>
 </head>
 <body>
-
   <!-- NAVBAR -->
   <nav>
     <div class="nav-content">
@@ -184,15 +183,34 @@ if (!isset($_SESSION['usuario_id'])) {
         HACIENDA REAL
       </div>
 
+      <?php
+      // Helper seguro para escapar SIEMPRE strings
+      if (!function_exists('e')) {
+        function e($v) {
+          return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+        }
+      }
+
+      // Toma valores desde sesión con fallback
+      $nombre = $_SESSION['nombre_completo'] 
+                ?? $_SESSION['nombre'] 
+                ?? 'Invitado';
+      // Si tienes rol_nombre úsalo; si no, muestra el ID o "Sin rol"
+      $rol = $_SESSION['rol_nombre'] 
+             ?? $_SESSION['rol_id'] 
+             ?? 'Sin rol';
+      ?>
+
       <div class="user-info">
         <div class="user-details">
-          <h1>Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre_completo']); ?></h1>
-          <p>Rol: <?php echo htmlspecialchars($_SESSION['rol_id']); ?></p>
+          <h1>Bienvenido, <?= e($nombre) ?></h1>
+          <p>Rol: <?= e($rol) ?></p>
         </div>
         <a href="../login/logout.php">Cerrar sesión</a>
       </div>
     </div>
   </nav>
+
 
   <!-- HEADER -->
   <header>
@@ -217,9 +235,9 @@ if (!isset($_SESSION['usuario_id'])) {
       <div class="overlay">PROVEEDORES</div>
     </div>
 
-    <div class="grid-item" onclick="redirigir('../ventas/index.php')">
+    <div class="grid-item" onclick="redirigir('../reportes/index.php')">
       <img src="../login/assets/img/pexels-olly-3760072.jpg" alt="Ventas">
-      <div class="overlay">VENTAS</div>
+      <div class="overlay">REPORTES</div>
     </div>
 
     <div class="grid-item" onclick="redirigir('../Planilla/index.php')">
