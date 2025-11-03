@@ -51,7 +51,8 @@ CREATE TABLE `planilla` (
   `deducciones` decimal(12,2) DEFAULT 0,
   `sueldo_neto` decimal(12,2) NOT NULL,
   `fecha_pago` date,
-  `notas` text
+  `notas` text,
+  `puesto` VARCHAR(100)
 );
 
 CREATE TABLE `sucursales` (
@@ -282,10 +283,6 @@ CREATE TABLE `auditoria` (
   `detalle` text,
   `creado_en` datetime DEFAULT CURRENT_TIMESTAMP
 );
-
--- 2. Agregar columna 'puesto' a 'planilla' (si no existe ya)
-ALTER TABLE `planilla` ADD COLUMN IF NOT EXISTS `puesto` VARCHAR(100) NOT NULL DEFAULT '' AFTER `empleado_id`;
-
 -- 3. Agregar todas las Foreign Keys con ALTER TABLE (en orden para evitar errores de dependencia)
 
 ALTER TABLE `usuarios` ADD CONSTRAINT `fk_usuarios_rol_id` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
