@@ -1,5 +1,5 @@
 <?php
-require_once "../login/check_adminGer.php";
+require_once "../login/check_adminEmple.php"; 
 ?>
 
 <!DOCTYPE html>

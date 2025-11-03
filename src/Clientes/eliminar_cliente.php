@@ -1,5 +1,5 @@
 <?php
-require_once "../login/check_adminEmple.php";
+require_once "../login/check_adminGer.php";
 // Configuración de la base de datos
 $host = 'db';
 $user = 'user';
