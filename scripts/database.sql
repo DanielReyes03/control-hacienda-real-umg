@@ -23,19 +23,24 @@ CREATE TABLE `puestos` (
   `descripcion` varchar(255)
 );
 
-CREATE TABLE `empleados` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `puesto_id` int,
-  `nombres` varchar(100) NOT NULL,
-  `apellidos` varchar(100) NOT NULL,
-  `dpi` varchar(25),
-  `telefono` varchar(50),
-  `correo` varchar(150),
-  `salario` decimal(12,2) DEFAULT 0,
-  `fecha_inicio` date,
-  `activo` boolean DEFAULT true,
-  `creado_en` datetime
+CREATE TABLE empleados (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  puesto_id INT,
+  puesto VARCHAR(100),
+  nombres VARCHAR(100) NOT NULL,
+  apellidos VARCHAR(100) NOT NULL,
+  nombre VARCHAR(200),           
+  dpi VARCHAR(25),
+  cedula VARCHAR(25),
+  telefono VARCHAR(50),
+  correo VARCHAR(150),
+  salario DECIMAL(12,2) DEFAULT 0,
+  fecha_inicio DATE,
+  notas TEXT,
+  activo BOOLEAN DEFAULT TRUE,
+  creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
 
 CREATE TABLE `planilla` (
   `id` int PRIMARY KEY AUTO_INCREMENT,

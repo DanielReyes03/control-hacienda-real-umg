@@ -1,7 +1,4 @@
 <?php
-// editar_empleado.php - Formulario para editar un empleado existente
-// Carga datos por ID, permite edición y actualiza en DB
-
 $host = 'db';
 $user = 'user';
 $password = 'userpassword';
