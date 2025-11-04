@@ -1,17 +1,11 @@
 <?php
 require_once "../login/check_adminGer.php";
-// Configuración de la base de datos
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
+include("../db/conexion.php");
 
 // Crear conexión
-$conn = new mysqli($host, $user, $password, $database);
-
-// Revisar conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
+$conn = conectar();
+if (!$conn) {
+    die("Error al conectar con la base de datos.");
 }
 
 // Manejo de AJAX: Fetch empleado si se solicita

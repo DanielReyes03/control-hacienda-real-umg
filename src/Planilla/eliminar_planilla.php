@@ -1,22 +1,8 @@
 <?php
 
 require_once "../login/check_admin.php";
-// eliminar_planilla.php - Elimina una planilla por ID y redirige a index.php
-
-// Configuración de la base de datos
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
-
-// Crear conexión
-$conn = new mysqli($host, $user, $password, $database);
-
-// Revisar conexión
-if ($conn->connect_error) {
-    header("Location: index.php?error=" . urlencode("Error de conexión: " . $conn->connect_error));
-    exit();
-}
+include("../db/conexion.php");
+$conn = conectar();
 
 // Obtener ID de la planilla
 $id = intval($_GET['id'] ?? 0);

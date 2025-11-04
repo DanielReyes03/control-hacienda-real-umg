@@ -1,21 +1,7 @@
 <?php
 require_once "../login/check_adminEmple.php";
-// ver_empleados.php - Lista de empleados (versión corregida para deprecaciones de null en htmlspecialchars)
-// Coloca este archivo en /var/www/html/planilla/ para ver empleados: http://tu-servidor/planilla/ver_empleados.php
-
-// Configuración de la base de datos
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
-
-// Crear conexión
-$conn = new mysqli($host, $user, $password, $database);
-
-// Revisar conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
+include("../db/conexion.php");
+$conn = conectar();
 
 // Manejo de mensajes de redirección
 $mensaje_success = $_GET['success'] ?? '';
@@ -61,9 +47,8 @@ $mensaje_error = $_GET['error'] ?? '';
         </tr>
 
         <?php
-        // Consulta para mostrar empleados (usa 'nombre' concatenado, 'dpi' para cédula, etc.)
-        // Muestra todos, pero puedes filtrar solo activos agregando WHERE activo = 1
-        $sql = "SELECT id, nombres, dpi AS cedula, puesto, salario, fecha_inicio, telefono, correo, activo, notas 
+        // Consulta para mostrar empleados
+        $sql = "SELECT id, nombres, apellidos, dpi AS cedula, puesto, salario, fecha_inicio, telefono, correo, activo, notas 
                 FROM empleados 
                 ORDER BY id DESC";
         $resultado = $conn->query($sql);
@@ -71,6 +56,7 @@ $mensaje_error = $_GET['error'] ?? '';
         if ($resultado && $resultado->num_rows > 0) {
           while ($fila = $resultado->fetch_assoc()) {
             $id = $fila['id'];
+            $nombre_completo = trim(($fila['nombres'] ?? '') . ' ' . ($fila['apellidos'] ?? ''));
             $estado = ($fila['activo'] ?? 0) ? 'Activo' : 'Inactivo';
             $puesto = $fila['puesto'] ?? 'No especificado';
             $salario = $fila['salario'] ?? 0;
@@ -78,9 +64,10 @@ $mensaje_error = $_GET['error'] ?? '';
             $telefono = $fila['telefono'] ?? '';
             $correo = $fila['correo'] ?? '';
             $notas = $fila['notas'] ?? '';
+
             echo "<tr>
                     <td>" . htmlspecialchars($id) . "</td>
-                    <td>" . htmlspecialchars($fila['nombre'] ?? '') . "</td>
+                    <td>" . htmlspecialchars($nombre_completo) . "</td>
                     <td>" . htmlspecialchars($fila['cedula'] ?? '') . "</td>
                     <td>" . htmlspecialchars($puesto) . "</td>
                     <td>" . htmlspecialchars(number_format($salario, 2)) . "</td>

@@ -1,26 +1,15 @@
 <?php
-require_once "../login/check_adminEmple.php";
-?>
+require_once "../login/check_adminEmple.php"; 
 
-<?php
-// Configuración de la base de datos
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
-
-// Crear conexión
-$conn = new mysqli($host, $user, $password, $database);
-
-// Revisar conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
+// --- Conexión a la base de datos ---
+include("../db/conexion.php");
+$conn = conectar();
 
 // Manejo de mensajes de redirección
 $mensaje_success = $_GET['success'] ?? '';
 $mensaje_error = $_GET['error'] ?? '';
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -57,28 +46,29 @@ $mensaje_error = $_GET['error'] ?? '';
         </tr>
 
         <?php
+        // Consulta a la tabla clientes
         $sql = "SELECT * FROM clientes ORDER BY id DESC";
         $resultado = $conn->query($sql);
 
         if ($resultado && $resultado->num_rows > 0) {
           while ($fila = $resultado->fetch_assoc()) {
-            $id = $fila['id']; // No htmlspecialchars para JS numérico
+            $id = htmlspecialchars($fila['id']);
             echo "<tr>
-                    <td>" . htmlspecialchars($id) . "</td>
+                    <td>{$id}</td>
                     <td>" . htmlspecialchars($fila['dpi'] ?? '') . "</td>
-                    <td>" . htmlspecialchars($fila['nombre']) . "</td>
+                    <td>" . htmlspecialchars($fila['nombre'] ?? '') . "</td>
                     <td>" . htmlspecialchars($fila['telefono'] ?? '') . "</td>
                     <td>" . htmlspecialchars($fila['correo'] ?? '') . "</td>
                     <td>" . htmlspecialchars($fila['direccion'] ?? '') . "</td>
                     <td>" . ($fila['creado_en'] ? date('d/m/Y', strtotime($fila['creado_en'])) : '') . "</td>
                     <td class='acciones'>
-                      <a href='#' class='boton-editar' onclick='alertaEditar(event, $id)'>Editar</a>
-                      <a href='#' class='boton-eliminar' onclick='alertaEliminar(event, $id)'>Eliminar</a>
+                      <a href='#' class='boton-editar' onclick='alertaEditar(event, {$id})'>Editar</a>
+                      <a href='#' class='boton-eliminar' onclick='alertaEliminar(event, {$id})'>Eliminar</a>
                     </td>
                   </tr>";
           }
         } else {
-          echo "<tr><td colspan=\"8\">No hay clientes registrados</td></tr>";
+          echo "<tr><td colspan='8'>No hay clientes registrados</td></tr>";
         }
         $conn->close();
         ?>
@@ -127,10 +117,9 @@ $mensaje_error = $_GET['error'] ?? '';
       });
     }
 
-    // Alerta al editar
+    // Alerta al editar cliente
     function alertaEditar(event, id) {
       event.preventDefault();
-      console.log("ID para editar:", id); // Debug: verifica en consola F12
       Swal.fire({
         title: "Editar cliente",
         text: "¿Deseas modificar la información de este cliente?",
@@ -147,7 +136,7 @@ $mensaje_error = $_GET['error'] ?? '';
       });
     }
 
-    // Alerta al eliminar
+    // Alerta al eliminar cliente
     function alertaEliminar(event, id) {
       event.preventDefault();
       Swal.fire({

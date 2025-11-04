@@ -1,23 +1,11 @@
 <?php
 require_once "../login/check_adminGer.php";
-// procesar_empleado.php - Versión CORREGIDA para campos requeridos NOT NULL
-// Incluye 'nombres', 'apellidos', 'dpi' en INSERT (mapea desde input)
-// Asume split simple de 'nombre': primera palabra a 'nombres', resto a 'apellidos'
-// Mapea 'cedula' a 'dpi' (campo original)
-// Agrega 'activo' = 1 y 'puesto_id' = 1 (default; ajusta si tienes tabla puestos)
-// AGREGADO: Campos teléfono y correo (de la tabla ver_empleados.php)
-// AGREGADO: Campo "Estado" (activo) editable en el formulario (default Activo)
-// AGREGADO: Validación para Cédula/DPI: exactamente 13 dígitos (cliente y servidor)
+include("../db/conexion.php");
 
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
-
-$conn = new mysqli($host, $user, $password, $database);
-
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
+// Crear conexión
+$conn = conectar();
+if (!$conn) {
+    die("Error al conectar con la base de datos.");
 }
 
 $mensaje_success = '';
