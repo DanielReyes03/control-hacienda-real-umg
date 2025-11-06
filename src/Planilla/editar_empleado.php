@@ -1,13 +1,11 @@
 <?php
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
+require_once "../login/check_adminGer.php";
+include("../db/conexion.php");
 
-$conn = new mysqli($host, $user, $password, $database);
-
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
+// Crear conexión
+$conn = conectar();
+if (!$conn) {
+    die("Error al conectar con la base de datos.");
 }
 
 $mensaje_success = '';
