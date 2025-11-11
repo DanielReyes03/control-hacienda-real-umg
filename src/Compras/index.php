@@ -155,6 +155,26 @@ require_once "../login/check_adminGer.php";
         items: JSON.parse(JSON.stringify(cart)),
         total: cart.reduce((sum, i) => sum + i.price * i.quantity, 0)
       };
+            // Guardar en base de datos (API)
+  fetch("./api_guardar_venta.php", {
+
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      cliente: currentOrder.cliente,
+      direccion: currentOrder.direccion,
+      entrega: currentOrder.entrega,
+      pago: currentOrder.pago,
+      total: currentOrder.total,
+      items: currentOrder.items
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+      console.log("Venta guardada:", data);
+  })
+  .catch(err => console.error("Error enviando venta:", err));
+
 
       try {
         // ✅ Ruta corregida (mismo nivel que index.php)
@@ -188,6 +208,7 @@ require_once "../login/check_adminGer.php";
         alert('⚠️ No se pudo guardar la venta: ' + error.message);
       }
     }
+
 
     function showReceipt(order) {
       const receipt = document.getElementById('receipt');
