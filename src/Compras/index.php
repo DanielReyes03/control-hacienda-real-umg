@@ -329,6 +329,26 @@ require_once "../login/check_adminclient.php";
         items: JSON.parse(JSON.stringify(cart)),
         total: cart.reduce((sum, i) => sum + i.price * i.quantity, 0)
       };
+            // Guardar en base de datos (API)
+  fetch("./api_guardar_venta.php", {
+
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      cliente: currentOrder.cliente,
+      direccion: currentOrder.direccion,
+      entrega: currentOrder.entrega,
+      pago: currentOrder.pago,
+      total: currentOrder.total,
+      items: currentOrder.items
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+      console.log("Venta guardada:", data);
+  })
+  .catch(err => console.error("Error enviando venta:", err));
+
 
       orders.unshift(currentOrder);
       localStorage.setItem('hacienda_orders', JSON.stringify(orders));
@@ -338,6 +358,7 @@ require_once "../login/check_adminclient.php";
       showReceipt(currentOrder);
       document.querySelector('form').reset();
     }
+
 
     function showReceipt(order) {
       document.getElementById('receipt-date').textContent = order.date;
