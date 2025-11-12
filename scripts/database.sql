@@ -62,8 +62,15 @@ CREATE TABLE `sucursales` (
   `gerente_id` int,
   `telefono` varchar(50),
   `numero_mesas` int DEFAULT 0,
-  `creado_en` datetime
+  `creado_en` datetime DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO sucursales (nombre, direccion, telefono, numero_mesas) VALUES
+('Zona 10 (Sede Principal)', 'Zona 10, Guatemala', '+502 2380-8383', 20),
+('Zona 11 (Las Majadas)', 'Zona 11, Las Majadas, Guatemala', '+502 2380-8384', 15),
+('Zona 14', 'Zona 14, Guatemala', '+502 2380-8385', 10),
+('Condado Concepción', 'Condado Concepción, Guatemala', '+502 2380-8386', 12),
+('Dinamia Cayalá', 'Dinamia Cayalá, Guatemala', '+502 2380-8387', 18);
 
 CREATE TABLE `mesas` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
@@ -348,6 +355,13 @@ ALTER TABLE `alertas_stock` ADD CONSTRAINT `fk_alertas_stock_item_id` FOREIGN KE
 ALTER TABLE `auditoria` ADD CONSTRAINT `fk_auditoria_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 
+INSERT INTO roles (nombre, descripcion) VALUES
+('Administrador', 'Tiene acceso completo a todas las secciones del sistema'),
+('Gerente', 'Acceso a reportes, planilla y ventas de su sucursal'),
+('Empleado', 'Acceso limitado a módulos de ventas y clientes'),
+('Repartidor', 'Acceso solo a domicilios y entregas'),
+('Cliente','Acceso solo al servicio a domicilio');
+
 INSERT INTO usuarios (rol_id, usuario, contrasena_hash, nombre_completo, correo, telefono, creado_en)
 VALUES (
   (SELECT id FROM roles WHERE nombre = 'Administrador'),
@@ -360,6 +374,21 @@ VALUES (
 );
 
 
+
+CREATE TABLE `reservaciones` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre_completo` varchar(255) NOT NULL,
+  `correo_electronico` varchar(150) NOT NULL,
+  `telefono` varchar(50) NOT NULL,
+  `sucursal_id` int NOT NULL,
+  `fecha_reservacion` date NOT NULL,
+  `hora_reservacion` time NOT NULL,
+  `numero_personas` int NOT NULL,
+  `comentarios_adicionales` text,
+  `creado_en` datetime DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE `reservaciones` ADD CONSTRAINT `fk_reservaciones_sucursal_id` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursales` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 INSERT INTO roles (nombre, descripcion) VALUES
 ('Administrador', 'Tiene acceso completo a todas las secciones del sistema'),
