@@ -161,17 +161,23 @@ if (!isset($_SESSION['usuario_id'])) {
       color: #111;
     }
 
-    .clientes-centrado {
+    .clientes-tiendas-container {
       display: flex;
       justify-content: center;
       align-items: center;
+      gap: 15px;
       margin: 40px 0;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .grid-item.clientes {
+    .grid-item.clientes,
+    .grid-item.tiendas {
       width: 300px;
       height: 200px;
     }
+
   </style>
 </head>
 <body>
@@ -258,15 +264,22 @@ if (!isset($_SESSION['usuario_id'])) {
       <img src="../login/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Control de Vehículos">
       <div class="overlay">CONTROL DE VEHÍCULOS</div>
     </div>
+    
   </section>
 
-  <!-- CLIENTES -->
-  <div class="clientes-centrado">
-    <div class="grid-item clientes" onclick="redirigir('../clientes/index.php')">
-      <img src="../login/assets/img/clientes.jpg" alt="Clientes">
-      <div class="overlay">CLIENTES</div>
+  <!-- CLIENTES Y TIENDAS -->
+  <section>
+    <div class="clientes-tiendas-container">
+      <div class="grid-item clientes" onclick="redirigir('../clientes/index.php')">
+        <img src="../login/assets/img/clientes.jpg" alt="Clientes">
+        <div class="overlay">CLIENTES</div>
+      </div>
+      <div class="grid-item tiendas" onclick="redirigir('../tiendas/index.php')">
+        <img src="../login/assets/img/tiendas.jpeg" alt="Tienda">
+        <div class="overlay">TIENDA</div>
+      </div>
     </div>
-  </div>
+  </section>
 
   <script>
     function redirigir(ruta) {

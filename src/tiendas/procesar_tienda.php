@@ -24,27 +24,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $horarios = trim($_POST['horarios']);
   $caracteristicas = trim($_POST['caracteristicas']);
   $calificacion = trim($_POST['calificacion']);
-  $num_resenas = trim($_POST['num_resenas']);
   $capacidad = trim($_POST['capacidad']);
 
   $errores = [];
   if (empty($nombre)) $errores[] = 'El nombre es obligatorio.';
   if ($numero_mesas !== '' && !is_numeric($numero_mesas)) $errores[] = 'Número de mesas debe ser numérico.';
   if ($calificacion !== '' && (!is_numeric($calificacion) || $calificacion < 0 || $calificacion > 5)) $errores[] = 'La calificación debe ser un número entre 0 y 5.';
-  if ($num_resenas !== '' && !is_numeric($num_resenas)) $errores[] = 'Número de reseñas debe ser numérico.';
   if ($capacidad !== '' && !is_numeric($capacidad)) $errores[] = 'Capacidad debe ser numérico.';
 
   if (empty($errores)) {
     // Si gerente_id está vacío, se pasa NULL
-    $gerente_id = ($gerente_id === '') ? NULL : $gerente_id;
+    $gerente_id = ($gerente_id === '') ? NULL : intval($gerente_id);
+
+    // Cálculo automático de capacidad si no se proporciona
+    if (empty($capacidad) || $capacidad == 0) {
+      $personas_por_mesa = 4;
+      $capacidad = intval($numero_mesas) * $personas_por_mesa;
+    } else {
+      $capacidad = intval($capacidad);
+    }
 
     $stmt = $conn->prepare("
       INSERT INTO sucursales 
-      (nombre, direccion, gerente_id, telefono, numero_mesas, horarios, caracteristicas, calificacion, num_resenas, capacidad, creado_en)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      (nombre, direccion, gerente_id, telefono, numero_mesas, horarios, caracteristicas, calificacion, capacidad, creado_en)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     $stmt->bind_param(
-      "ssisisdsii",
+      "ssisissdi",
       $nombre,
       $direccion,
       $gerente_id,
@@ -53,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $horarios,
       $caracteristicas,
       $calificacion,
-      $num_resenas,
       $capacidad
     );
 
@@ -63,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
       $errores[] = "Error al crear: " . $conn->error;
     }
+    $stmt->close();
   }
 
   if (!empty($errores)) {
@@ -137,13 +143,9 @@ cabecera("Crear Sucursal");
     </div>
 
     <div class="campo">
-      <label>Número de Reseñas</label>
-      <input type="number" name="num_resenas" min="0" value="0">
-    </div>
-
-    <div class="campo">
       <label>Capacidad</label>
-      <input type="number" name="capacidad" min="0" value="0">
+      <input type="number" name="capacidad" min="0" value="0" readonly>
+      <small>(Se calculará automáticamente basado en mesas × 4 personas/mesa)</small>
     </div>
 
     <div class="botones">
@@ -153,6 +155,25 @@ cabecera("Crear Sucursal");
 
   </form>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const inputMesas = document.querySelector('input[name="numero_mesas"]');
+  const inputCapacidad = document.querySelector('input[name="capacidad"]');
+
+  function calcularCapacidad() {
+    const mesas = parseInt(inputMesas.value) || 0;
+    const personasPorMesa = 4; // Ajustable si necesitas cambiarlo
+    const capacidad = mesas * personasPorMesa;
+    inputCapacidad.value = capacidad;
+  }
+
+  inputMesas.addEventListener('input', calcularCapacidad);
+  
+  // Calcular inicial si hay valor por defecto
+  calcularCapacidad();
+});
+</script>
 
 <?php if ($mensaje): ?>
 <script>

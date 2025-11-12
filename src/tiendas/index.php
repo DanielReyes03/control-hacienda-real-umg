@@ -40,7 +40,6 @@ $mensaje_error = isset($_GET['error']) ? $_GET['error'] : '';
           <th>Horarios</th>
           <th>Características</th>
           <th>Calificación</th>
-          <th>Reseñas</th>
           <th>Capacidad</th>
           <th>Creada el</th>
           <th>Acciones</th>
@@ -60,11 +59,13 @@ $mensaje_error = isset($_GET['error']) ? $_GET['error'] : '';
             $telefono = !empty($fila['telefono']) ? $fila['telefono'] : '';
             $numero_mesas = !empty($fila['numero_mesas']) ? $fila['numero_mesas'] : '';
             $horarios = !empty($fila['horarios']) ? $fila['horarios'] : '';
-            $caracteristicas = !empty($fila['caracteristicas']) ? $fila['caracteristicas'] : '';
+            $caracteristicas_full = !empty($fila['caracteristicas']) ? $fila['caracteristicas'] : '';
             $calificacion = !empty($fila['calificacion']) ? $fila['calificacion'] : '';
-            $num_resenas = !empty($fila['num_resenas']) ? $fila['num_resenas'] : '';
             $capacidad = !empty($fila['capacidad']) ? $fila['capacidad'] : '';
             $creado_en = !empty($fila['creado_en']) ? date('d/m/Y', strtotime($fila['creado_en'])) : '';
+
+            // Truncar características si es larga (opcional, para tabla limpia)
+            $caracteristicas = strlen($caracteristicas_full) > 30 ? substr($caracteristicas_full, 0, 30) . '...' : $caracteristicas_full;
 
             echo "<tr>
                     <td>" . htmlspecialchars($id) . "</td>
@@ -73,10 +74,9 @@ $mensaje_error = isset($_GET['error']) ? $_GET['error'] : '';
                     <td>" . htmlspecialchars($gerente_id) . "</td>
                     <td>" . htmlspecialchars($telefono) . "</td>
                     <td>" . htmlspecialchars($numero_mesas) . "</td>
-                    <td>" . htmlspecialchars($horarios) . "</td>
-                    <td>" . htmlspecialchars($caracteristicas) . "</td>
+                    <td title='" . htmlspecialchars($horarios) . "'>" . htmlspecialchars($horarios) . "</td>
+                    <td title='" . htmlspecialchars($caracteristicas_full) . "'>" . htmlspecialchars($caracteristicas) . "</td>
                     <td>" . htmlspecialchars($calificacion) . "</td>
-                    <td>" . htmlspecialchars($num_resenas) . "</td>
                     <td>" . htmlspecialchars($capacidad) . "</td>
                     <td>" . htmlspecialchars($creado_en) . "</td>
                     <td class='acciones'>
@@ -86,7 +86,7 @@ $mensaje_error = isset($_GET['error']) ? $_GET['error'] : '';
                   </tr>";
           }
         } else {
-          echo "<tr><td colspan='13'>No hay sucursales registradas</td></tr>";
+          echo "<tr><td colspan='12'>No hay sucursales registradas</td></tr>";
         }
         $conn->close();
         ?>
@@ -146,7 +146,7 @@ $mensaje_error = isset($_GET['error']) ? $_GET['error'] : '';
       }).then((r) => {
         if (r.isConfirmed) {
           Swal.fire({title:"Eliminando...", icon:"success", timer:1200, showConfirmButton:false});
-          setTimeout(()=>window.location.href="eliminar_sucursal.php?id="+id,1200);
+          setTimeout(()=>window.location.href="eliminar_tienda.php?id="+id,1200);
         }
       });
     }
