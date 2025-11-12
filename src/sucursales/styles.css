@@ -57,6 +57,28 @@ body {
     margin: 0 auto 2rem auto;
 }
 
+/* Sección de Reservaciones */
+.reservations {
+    padding: 3rem 0;
+    background-color: #FFFFFF;
+}
+
+.reservations h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: #FFFFFF;
+    background-color: #E15B65;
+    padding: 1rem;
+    border-radius: 10px;
+    display: inline-block;
+    margin: 0 auto 2rem auto;
+}
+
+.reservations button {
+    display: block;
+    margin: 0 auto 2rem auto;
+}
+
 /* Tarjetas */
 .branch-grid {
     display: grid;

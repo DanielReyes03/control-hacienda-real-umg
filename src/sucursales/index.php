@@ -58,11 +58,78 @@ $conn = conectar();
         </div>
     </section>
 
+    <!-- Sección de Reservaciones -->
+    <section class="reservations">
+        <div class="container">
+            <h2>Reservaciones</h2>
+            <button id="toggleReservations" class="btn">Ver Reservaciones</button>
+            <div id="reservationsTable" style="display: none;">
+                <?php
+                // Reconectar a la base de datos para las reservaciones
+                $conn = conectar();
+                $sql_reservaciones = "SELECT r.*, s.nombre AS sucursal_nombre FROM reservaciones r JOIN sucursales s ON r.sucursal_id = s.id ORDER BY r.fecha_creacion DESC";
+                $resultado_reservaciones = $conn->query($sql_reservaciones);
+
+                if ($resultado_reservaciones && $resultado_reservaciones->num_rows > 0) {
+                    echo "<table class='table'>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Sucursal</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Personas</th>
+                                    <th>Comentarios</th>
+                                    <th>Fecha Creación</th>
+                                </tr>
+                            </thead>
+                            <tbody>";
+                    while ($fila_reservacion = $resultado_reservaciones->fetch_assoc()) {
+                        echo "<tr>
+                                <td>" . htmlspecialchars($fila_reservacion['id']) . "</td>
+                                <td>" . htmlspecialchars($fila_reservacion['nombre']) . "</td>
+                                <td>" . htmlspecialchars($fila_reservacion['email']) . "</td>
+                                <td>" . htmlspecialchars($fila_reservacion['telefono']) . "</td>
+                                <td>" . htmlspecialchars($fila_reservacion['sucursal_nombre']) . "</td>
+                                <td>" . htmlspecialchars($fila_reservacion['fecha']) . "</td>
+                                <td>" . htmlspecialchars($fila_reservacion['hora']) . "</td>
+                                <td>" . htmlspecialchars($fila_reservacion['personas']) . "</td>
+                                <td>" . htmlspecialchars($fila_reservacion['comentarios'] ?? '') . "</td>
+                                <td>" . htmlspecialchars($fila_reservacion['fecha_creacion']) . "</td>
+                              </tr>";
+                    }
+                    echo "</tbody></table>";
+                } else {
+                    echo "<p>No hay reservaciones disponibles en este momento.</p>";
+                }
+                $conn->close();
+                ?>
+            </div>
+        </div>
+    </section>
+
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 Hacienda Real Guatemala. Todos los derechos reservados.</p>
             <p>Visita <a href="https://haciendareal.net/" target="_blank">haciendareal.net</a> para más información.</p>
         </div>
     </footer>
+
+    <script>
+        // Función para alternar la visibilidad de la tabla de reservaciones
+        document.getElementById('toggleReservations').addEventListener('click', function() {
+            var table = document.getElementById('reservationsTable');
+            if (table.style.display === 'none') {
+                table.style.display = 'block';
+                this.textContent = 'Ocultar Reservaciones';
+            } else {
+                table.style.display = 'none';
+                this.textContent = 'Ver Reservaciones';
+            }
+        });
+    </script>
 </body>
 </html>
