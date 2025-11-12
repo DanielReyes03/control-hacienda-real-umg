@@ -260,14 +260,20 @@ if (!isset($_SESSION['usuario_id'])) {
     </div>
   </section>
 
-  <!-- CLIENTES -->
+  <section class="grid-container">
   <div class="clientes-centrado">
     <div class="grid-item clientes" onclick="redirigir('../clientes/index.php')">
       <img src="../login/assets/img/clientes.jpg" alt="Clientes">
       <div class="overlay">CLIENTES</div>
     </div>
   </div>
-
+  <div class="clientes-centrado">
+    <div class="grid-item tiendas" onclick="redirigir('../tiendas/index.php')">
+      <img src="../login/assets/img/tiendas.jpeg" alt="tiendas">
+      <div class="overlay">TIENDAS</div>
+    </div>
+  </div>
+  </section>
   <script>
     function redirigir(ruta) {
       window.location.href = ruta;

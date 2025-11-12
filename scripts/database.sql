@@ -64,6 +64,14 @@ CREATE TABLE `sucursales` (
   `numero_mesas` int DEFAULT 0,
   `creado_en` datetime
 );
+ALTER TABLE `sucursales` 
+ADD COLUMN `horarios` VARCHAR(255),
+ADD COLUMN `caracteristicas` TEXT,
+ADD COLUMN `calificacion` DECIMAL(3,2),
+ADD COLUMN `num_resenas` INT DEFAULT 0,
+ADD COLUMN `capacidad` INT DEFAULT 0;
+
+
 
 CREATE TABLE `mesas` (
   `id` int PRIMARY KEY AUTO_INCREMENT,

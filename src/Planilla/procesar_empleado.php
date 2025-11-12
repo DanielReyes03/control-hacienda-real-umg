@@ -11,57 +11,85 @@ if (!$conn) {
 $mensaje_success = '';
 $mensaje_error = '';
 
+// 🔹 Cargar lista de puestos
+$puestos = [];
+$query_puestos = "SELECT id, nombre FROM puestos ORDER BY nombre ASC";
+$result_puestos = $conn->query($query_puestos);
+if ($result_puestos && $result_puestos->num_rows > 0) {
+    while ($row = $result_puestos->fetch_assoc()) {
+        $puestos[] = $row;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre = trim($_POST['nombre'] ?? '');
     $cedula = trim($_POST['cedula'] ?? '');
-    $puesto = trim($_POST['puesto'] ?? '');
+    $puesto_id = intval($_POST['puesto_id'] ?? 0);
     $salario_base = floatval($_POST['salario_base'] ?? 0);
     $fecha_contratacion = trim($_POST['fecha_contratacion'] ?? '');
     $telefono = trim($_POST['telefono'] ?? '');
     $correo = trim($_POST['correo'] ?? '');
     $notas = trim($_POST['notas'] ?? '');
-    $activo = intval($_POST['activo'] ?? 1); // Nuevo: Estado desde formulario (1=Activo, 0=Inactivo)
+    $activo = intval($_POST['activo'] ?? 1);
 
-    if (empty($nombre) || empty($cedula) || empty($puesto) || $salario_base <= 0 || empty($fecha_contratacion)) {
+    if (empty($nombre) || empty($cedula) || $puesto_id <= 0 || $salario_base <= 0 || empty($fecha_contratacion)) {
         $mensaje_error = 'Por favor, completa todos los campos requeridos correctamente.';
     } elseif (strlen($cedula) !== 13 || !ctype_digit($cedula)) {
         $mensaje_error = 'La cédula/DPI debe tener exactamente 13 dígitos numéricos.';
     } else {
-        // Split nombre: primera palabra a 'nombres', resto a 'apellidos'
-        $partes_nombre = explode(' ', $nombre, 2);
-        $nombres = trim($partes_nombre[0] ?? '');
-        $apellidos = trim($partes_nombre[1] ?? '');
+        // Validar que el puesto exista
+        $puesto_nombre = '';
+        $stmt_puesto = $conn->prepare("SELECT nombre FROM puestos WHERE id = ?");
+        $stmt_puesto->bind_param("i", $puesto_id);
+        $stmt_puesto->execute();
+        $stmt_puesto->bind_result($puesto_nombre);
+        $stmt_puesto->fetch();
+        $stmt_puesto->close();
 
-        // Verificar duplicado por cedula (o dpi)
-        $check_sql = "SELECT id FROM empleados WHERE cedula = ? OR dpi = ?";
-        $stmt_check = $conn->prepare($check_sql);
-        $stmt_check->bind_param("ss", $cedula, $cedula);
-        $stmt_check->execute();
-        $result_check = $stmt_check->get_result();
-
-        if ($result_check->num_rows > 0) {
-            $mensaje_error = 'Ya existe un empleado con esa cédula/DPI.';
+        if (empty($puesto_nombre)) {
+            $mensaje_error = 'El puesto seleccionado no existe.';
         } else {
-            // INSERT completo con TODOS los campos requeridos, incluyendo telefono, correo y activo editable
-            $sql = "INSERT INTO empleados (nombres, apellidos, dpi, puesto, salario, fecha_inicio, telefono, correo, notas, cedula, nombre, puesto_id, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)";
-            $stmt = $conn->prepare($sql);
-            // bind: s s s s d s s s s s s i (11 strings/double + activo i)
-            $stmt->bind_param("ssssdssssssi", $nombres, $apellidos, $cedula, $puesto, $salario_base, $fecha_contratacion, $telefono, $correo, $notas, $cedula, $nombre, $activo);
+            // Dividir nombre en nombres y apellidos
+            $partes_nombre = explode(' ', $nombre, 2);
+            $nombres = trim($partes_nombre[0] ?? '');
+            $apellidos = trim($partes_nombre[1] ?? '');
 
-            if ($stmt->execute()) {
-                $mensaje_success = 'Empleado creado exitosamente.';
-                header("Location: ver_empleados.php?success=" . urlencode($mensaje_success));
-                exit();
+            // Verificar duplicado por cédula
+            $check_sql = "SELECT id FROM empleados WHERE cedula = ?";
+            $stmt_check = $conn->prepare($check_sql);
+            $stmt_check->bind_param("s", $cedula);
+            $stmt_check->execute();
+            $result_check = $stmt_check->get_result();
+
+            if ($result_check->num_rows > 0) {
+                $mensaje_error = 'Ya existe un empleado con esa cédula/DPI.';
             } else {
-                $mensaje_error = 'Error al crear el empleado: ' . $stmt->error;
+                // Insertar empleado
+                $sql = "INSERT INTO empleados 
+                        (nombres, apellidos, dpi, puesto, salario, fecha_inicio, telefono, correo, notas, cedula, puesto_id, activo) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param(
+                    "ssssdssssiii",
+                    $nombres, $apellidos, $cedula, $puesto_nombre, $salario_base,
+                    $fecha_contratacion, $telefono, $correo, $notas, $cedula,
+                    $puesto_id, $activo
+                );
+
+                if ($stmt->execute()) {
+                    $mensaje_success = 'Empleado creado exitosamente.';
+                    header("Location: ver_empleados.php?success=" . urlencode($mensaje_success));
+                    exit();
+                } else {
+                    $mensaje_error = 'Error al crear el empleado: ' . $stmt->error;
+                }
+                $stmt->close();
             }
-            $stmt->close();
+            $stmt_check->close();
         }
-        $stmt_check->close();
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -88,19 +116,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
       <form method="POST" action="" onsubmit="return validarCedula()">
         <div class="campo">
-          <label for="nombre">Nombre Completo * (ej: Juan Carlos Pérez López)</label>
+          <label for="nombre">Nombre Completo *</label>
           <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($_POST['nombre'] ?? ''); ?>" required>
-          <small>Se dividirá en nombres y apellidos automáticamente.</small>
         </div>
 
         <div class="campo">
-          <label for="cedula">Cédula/DPI * (exactamente 13 dígitos)</label>
+          <label for="cedula">Cédula/DPI *</label>
           <input type="text" id="cedula" name="cedula" value="<?php echo htmlspecialchars($_POST['cedula'] ?? ''); ?>" required pattern="\d{13}" title="Debe tener exactamente 13 dígitos numéricos">
         </div>
 
         <div class="campo">
-          <label for="puesto">Puesto *</label>
-          <input type="text" id="puesto" name="puesto" value="<?php echo htmlspecialchars($_POST['puesto'] ?? ''); ?>" required>
+          <label for="puesto_id">Puesto *</label>
+          <select id="puesto_id" name="puesto_id" required>
+            <option value="">-- Selecciona un puesto --</option>
+            <?php foreach ($puestos as $p): ?>
+              <option value="<?php echo $p['id']; ?>" 
+                <?php echo (isset($_POST['puesto_id']) && $_POST['puesto_id'] == $p['id']) ? 'selected' : ''; ?>>
+                <?php echo htmlspecialchars($p['nombre']); ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
         </div>
 
         <div class="campo">
@@ -115,12 +150,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <div class="campo">
           <label for="telefono">Teléfono</label>
-          <input type="text" id="telefono" name="telefono" value="<?php echo htmlspecialchars($_POST['telefono'] ?? ''); ?>" placeholder="Ej: +502 5550-1234">
+          <input type="text" id="telefono" name="telefono" value="<?php echo htmlspecialchars($_POST['telefono'] ?? ''); ?>">
         </div>
 
         <div class="campo">
           <label for="correo">Correo Electrónico</label>
-          <input type="email" id="correo" name="correo" value="<?php echo htmlspecialchars($_POST['correo'] ?? ''); ?>" placeholder="Ej: empleado@haciendareal.com">
+          <input type="email" id="correo" name="correo" value="<?php echo htmlspecialchars($_POST['correo'] ?? ''); ?>">
         </div>
 
         <div class="campo">
@@ -129,7 +164,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <option value="1" <?php echo (($_POST['activo'] ?? 1) == 1) ? 'selected' : ''; ?>>Activo</option>
             <option value="0" <?php echo (($_POST['activo'] ?? 1) == 0) ? 'selected' : ''; ?>>Inactivo</option>
           </select>
-          <small>El estado determina si el empleado aparece en las planillas activas.</small>
         </div>
 
         <div class="campo">
@@ -146,7 +180,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   </main>
 
   <script>
-    // Validación cliente-side para cédula/DPI (13 dígitos exactos)
     function validarCedula() {
       const cedula = document.getElementById('cedula').value.trim();
       if (cedula.length !== 13 || !/^\d{13}$/.test(cedula)) {
@@ -160,16 +193,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       }
       return true;
     }
-
-    // Validación en tiempo real (opcional, para feedback inmediato)
-    document.getElementById('cedula').addEventListener('input', function() {
-      const cedula = this.value.trim();
-      if (cedula.length > 0 && (cedula.length !== 13 || !/^\d{13}$/.test(cedula))) {
-        this.style.borderColor = '#dc3545';
-      } else {
-        this.style.borderColor = '#28a745';
-      }
-    });
   </script>
 
   <?php if ($mensaje_success): ?>
