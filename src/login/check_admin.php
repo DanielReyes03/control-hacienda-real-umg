@@ -37,7 +37,7 @@ if (!in_array($_SESSION['rol_id'], $roles_permitidos)) {
             confirmButtonText: "Aceptar"
         }).then((result) => {
             if(result.isConfirmed){
-                window.location.href = "../index.php"; // Redirige al menú principal
+                window.location.href = "../inicio/index.php"; // Redirige al menú principal
             }
         });
     </script>
