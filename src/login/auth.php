@@ -35,7 +35,7 @@ if ($res && $res->num_rows === 1) {
         $stmt->close();
         desconectar($conn);
 
-        header("Location: ../index.php");
+        header("Location: ../inicio/index.php");
         exit();
     } else {
         $_SESSION['error'] = "Contraseña incorrecta.";
