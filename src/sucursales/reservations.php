@@ -39,11 +39,11 @@
                         <label for="branch">Sucursal</label>
                         <select id="branch" name="branch" required>
                             <option value="" disabled selected>Selecciona una sucursal</option>
-                            <option value="zona10">Zona 10 (Sede Principal)</option>
-                            <option value="zona11">Zona 11 (Las Majadas)</option>
-                            <option value="zona14">Zona 14</option>
-                            <option value="condado">Condado Concepción</option>
-                            <option value="cayala">Dinamia Cayalá</option>
+                            <option value="1">Zona 10 (Sede Principal)</option>
+                            <option value="2">Zona 11 (Las Majadas)</option>
+                            <option value="3">Zona 14</option>
+                            <option value="4">Condado Concepción</option>
+                            <option value="5">Dinamia Cayalá</option>
                         </select>
                     </div>
                     <div class="form-group">

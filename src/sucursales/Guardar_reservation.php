@@ -18,8 +18,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $message = "Correo electrónico no válido.";
     } else {
-        $conn = conectar();
-        $stmt = $conn->prepare("INSERT INTO reservaciones (name, email, phone, branch, date, time, guests, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $conn = conectar();
+        $stmt = $conn->prepare("INSERT INTO reservaciones (nombre_completo, correo_electronico, telefono, sucursal_id, fecha_reservacion, hora_reservacion, numero_personas, comentarios_adicionales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssssis", $name, $email, $phone, $branch, $date, $time, $guests, $comments);
         if ($stmt->execute()) {
             $message = "Reservación enviada exitosamente. ¡Gracias!";

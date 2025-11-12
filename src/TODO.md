@@ -1,7 +1,5 @@
-# TODO: Fix Duplicate Placa Error and Populate Sucursales Dropdown
-
-## Completed Tasks
-- [x] Edit `src/Vehiculos/procesar_vehiculo.php` to add try-catch around `$stmt->execute()` for handling duplicate placa errors gracefully.
-- [x] Add INSERT statements to `scripts/database.sql` for missing sucursales: Zona 10 (Sede Principal), Zona 11 (Las Majadas), Zona 14, Condado Concepción, Dinamia Cayalá.
-- [x] Run Docker command to insert sucursales data into the database.
-- [x] Test vehicle creation to ensure error handling and full sucursales dropdown.
+- [x] Actualizar tabla sucursales en database.sql: agregar datos de sucursales para las opciones del formulario.
+- [x] Crear tabla reservaciones en database.sql con campos en español y FK a sucursales.
+- [x] Actualizar Guardar_reservation.php para usar campos en español y sucursal_id.
+- [x] Actualizar reservations.php para usar sucursal_id en el select.
+- [x] Probar que las reservaciones se guarden en la BD y reflejen en Docker.
