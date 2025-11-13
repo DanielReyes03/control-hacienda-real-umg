@@ -23,19 +23,24 @@ CREATE TABLE `puestos` (
   `descripcion` varchar(255)
 );
 
-CREATE TABLE `empleados` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `puesto_id` int,
-  `nombres` varchar(100) NOT NULL,
-  `apellidos` varchar(100) NOT NULL,
-  `dpi` varchar(25),
-  `telefono` varchar(50),
-  `correo` varchar(150),
-  `salario` decimal(12,2) DEFAULT 0,
-  `fecha_inicio` date,
-  `activo` boolean DEFAULT true,
-  `creado_en` datetime
+CREATE TABLE empleados (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  puesto_id INT,
+  puesto VARCHAR(100),
+  nombres VARCHAR(100) NOT NULL,
+  apellidos VARCHAR(100) NOT NULL,
+  nombre VARCHAR(200),           
+  dpi VARCHAR(25),
+  cedula VARCHAR(25),
+  telefono VARCHAR(50),
+  correo VARCHAR(150),
+  salario DECIMAL(12,2) DEFAULT 0,
+  fecha_inicio DATE,
+  notas TEXT,
+  activo BOOLEAN DEFAULT TRUE,
+  creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
 
 CREATE TABLE `planilla` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
@@ -46,7 +51,8 @@ CREATE TABLE `planilla` (
   `deducciones` decimal(12,2) DEFAULT 0,
   `sueldo_neto` decimal(12,2) NOT NULL,
   `fecha_pago` date,
-  `notas` text
+  `notas` text,
+  `puesto` VARCHAR(100)
 );
 
 CREATE TABLE `sucursales` (
@@ -277,10 +283,6 @@ CREATE TABLE `auditoria` (
   `detalle` text,
   `creado_en` datetime DEFAULT CURRENT_TIMESTAMP
 );
-
--- 2. Agregar columna 'puesto' a 'planilla' (si no existe ya)
-ALTER TABLE `planilla` ADD COLUMN IF NOT EXISTS `puesto` VARCHAR(100) NOT NULL DEFAULT '' AFTER `empleado_id`;
-
 -- 3. Agregar todas las Foreign Keys con ALTER TABLE (en orden para evitar errores de dependencia)
 
 ALTER TABLE `usuarios` ADD CONSTRAINT `fk_usuarios_rol_id` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -344,3 +346,24 @@ ALTER TABLE `domicilios` ADD CONSTRAINT `fk_domicilios_repartidor_id` FOREIGN KE
 ALTER TABLE `alertas_stock` ADD CONSTRAINT `fk_alertas_stock_item_id` FOREIGN KEY (`inventario_item_id`) REFERENCES `inventario_materias_primas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `auditoria` ADD CONSTRAINT `fk_auditoria_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+
+INSERT INTO usuarios (rol_id, usuario, contrasena_hash, nombre_completo, correo, telefono, creado_en)
+VALUES (
+  (SELECT id FROM roles WHERE nombre = 'Administrador'),
+  'admin_root',
+  '$2y$10$7kH5FzQso0ZWV21fYiykj.A68h7iA9kIKrKi2B.KOYAmClUVcex02',  -- Contraseña: 123456
+  'Administrador General del Sistema',
+  'admin@lahaciendareal.com',
+  '000-0000',
+  NOW()
+);
+
+
+
+INSERT INTO roles (nombre, descripcion) VALUES
+('Administrador', 'Tiene acceso completo a todas las secciones del sistema'),
+('Gerente', 'Acceso a reportes, planilla y ventas de su sucursal'),
+('Empleado', 'Acceso limitado a módulos de ventas y clientes'),
+('Repartidor', 'Acceso solo a domicilios y entregas'),
+('Cliente','Acceso solo al servicio a domicilio');
