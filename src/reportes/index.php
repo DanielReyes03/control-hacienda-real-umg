@@ -10,7 +10,6 @@ require_once "../login/check_adminGer.php";
 </head>
 <body>
   <?php
-    // Cabecera global del proyecto
     include("../compartido/componentes/cabecera/index.php");
     cabecera("Reportes");
   ?>
@@ -20,10 +19,15 @@ require_once "../login/check_adminGer.php";
       <h2 class="section-title">Dashboard Analítico</h2>
 
       <!-- KPIs -->
-      <div class="kpis" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:12px;">
-        <div class="card">Total ventas del mes: <strong><span id="kpi-total">—</span></strong></div>
-        <div class="card">Ticket promedio: <strong><span id="kpi-ticket">—</span></strong></div>
-        <div class="card">Stock bajo: <strong><span id="kpi-stock">—</span></strong></div>
+      <div class="kpis" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:12px;">
+        <div class="card">
+          Total ventas del mes:
+          <strong><span id="kpi-total">—</span></strong>
+        </div>
+        <div class="card">
+          Ticket promedio:
+          <strong><span id="kpi-ticket">—</span></strong>
+        </div>
       </div>
 
       <!-- Filtros -->
@@ -59,24 +63,12 @@ require_once "../login/check_adminGer.php";
         </div>
 
         <div class="card">
-          <h3 class="section-subtitle">Top 5 productos más vendidos</h3>
-          <canvas id="chartTopProductos" height="150"></canvas>
-        </div>
-
-        <div class="card">
           <h3 class="section-subtitle">Comparativa de ventas por sucursal</h3>
           <canvas id="chartSucursales" height="140"></canvas>
         </div>
-        
-        <div class="card">
-          <h3 class="section-subtitle">Inventario crítico (Top 10 por faltante)</h3>
-          <canvas id="chartInventarioCritico" height="140"></canvas>
-        </div>
-
       </div>
     </div>
   </section>
-  
 
   <!-- Librerías -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
