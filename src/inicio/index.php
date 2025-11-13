@@ -16,7 +16,6 @@ if (!function_exists('e')) {
 $nombre = $_SESSION['nombre_completo'] ?? $_SESSION['nombre'] ?? 'Invitado';
 $rol_id = $_SESSION['rol_id'] ?? 0;
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -185,6 +184,108 @@ $rol_id = $_SESSION['rol_id'] ?? 0;
       width: 300px;
       height: 200px;
     }
+
+    /* === CHAT IA FLOTANTE === */
+    .chat-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #111827;
+      color: #fff;
+      border-radius: 999px;
+      padding: 10px 18px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 1100;
+    }
+
+    .chat-box {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 320px;
+      max-height: 420px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      display: none; /* se muestra con JS */
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1100;
+    }
+
+    .chat-header {
+      background: #111827;
+      color: #fff;
+      padding: 8px 12px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header button {
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .chat-messages {
+      padding: 10px;
+      height: 260px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    .chat-input {
+      border-top: 1px solid #e5e7eb;
+      padding: 8px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .chat-input textarea {
+      flex: 1;
+      resize: none;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      padding: 6px;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .chat-input button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .msg-user {
+      margin-bottom: 6px;
+    }
+
+    .msg-user b {
+      color: #111827;
+    }
+
+    .msg-ia {
+      margin-bottom: 6px;
+    }
+
+    .msg-ia b {
+      color: #047857;
+    }
   </style>
 </head>
 <body>
@@ -276,9 +377,68 @@ $rol_id = $_SESSION['rol_id'] ?? 0;
   </section>
   <?php endif; ?>
 
+  <!-- === CHAT IA FLOTANTE === -->
+  <button class="chat-toggle" onclick="toggleChat()">💬 IA Hacienda</button>
+
+  <div class="chat-box" id="chatBox">
+    <div class="chat-header">
+      <span>Asistente IA - Hacienda Real</span>
+      <button onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <p class="msg-ia"><b>IA:</b> Hola <?= e($nombre) ?>, ¿en qué puedo ayudarte dentro del sistema Hacienda Real?</p>
+    </div>
+    <div class="chat-input">
+      <textarea id="chatInput" rows="2" placeholder="Escribe tu consulta..."></textarea>
+      <button onclick="enviarIA()">Enviar</button>
+    </div>
+  </div>
+
   <script>
     function redirigir(ruta) {
       window.location.href = ruta;
+    }
+
+    function toggleChat() {
+      const box = document.getElementById('chatBox');
+      box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    async function enviarIA() {
+      const textarea = document.getElementById('chatInput');
+      const msg = textarea.value.trim();
+      if (!msg) return;
+
+      textarea.value = "";
+      const chat = document.getElementById('chatMessages');
+      chat.innerHTML += `<p class="msg-user"><b>Tú:</b> ${msg}</p>`;
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const res = await fetch("../compartido/chat_ia.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mensaje: msg })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          const msgError = (typeof data.error === "string")
+              ? data.error
+              : JSON.stringify(data.error);
+
+          chat.innerHTML += `<p class="msg-ia"><b>IA (error):</b> ${msgError}</p>`;
+        } else {
+          chat.innerHTML += `<p class="msg-ia"><b>IA:</b> ${data.output_text}</p>`;
+        }
+
+        chat.scrollTop = chat.scrollHeight;
+
+      } catch (err) {
+        chat.innerHTML += `<p class="msg-ia"><b>IA (error de red):</b> ${err}</p>`;
+        chat.scrollTop = chat.scrollHeight;
+      }
     }
   </script>
 
