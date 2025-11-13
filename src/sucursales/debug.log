@@ -1,0 +1,4 @@
+2025-11-12 14:17:56 - === INICIO DE GUARDAR_RESERVATION ===
+2025-11-12 14:17:56 - POST recibido
+2025-11-12 14:17:56 - Datos: nombre=richi, email=no@gmail.com, telefono=34567822, sucursal_id=8, fecha=2025-11-22, hora=08:17, personas=3, comentarios=asdfasdf
+2025-11-12 14:17:56 - ERRORES DE VALIDACIÓN: Teléfono inválido

@@ -238,7 +238,7 @@
 
 
 <footer class="bg-[#8B0000] text-white text-center py-5 mt-20">
-  <p>© 2025 Hacienda Real Guatemala. Todos los derechos reservados.</p>
+  <p>©️ 2025 Hacienda Real Guatemala. Todos los derechos reservados.</p>
 </footer>
 
 

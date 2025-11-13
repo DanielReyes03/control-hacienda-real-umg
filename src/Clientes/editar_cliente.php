@@ -1,15 +1,7 @@
 <?php
 require_once "../login/check_adminGer.php";
-// Configuración de la base de datos
-$host = 'db';
-$user = 'user';
-$password = 'userpassword';
-$database = 'mydb';
-
-$conn = new mysqli($host, $user, $password, $database);
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
+include("../db/conexion.php");
+$conn = conectar();
 
 $id = intval($_GET['id'] ?? 0);
 $cliente = null;
@@ -41,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $correo = trim($_POST['correo']);
     $direccion = trim($_POST['direccion']);
 
-    // Validaciones mejoradas
+    // Validaciones
     $errores = [];
     if (empty($nombre)) {
         $errores[] = 'El nombre es requerido.';
@@ -84,7 +76,6 @@ $conn->close();
   <link rel="stylesheet" href="./crear.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    /* Estilos inline para validaciones (agrega a crear.css si prefieres) */
     .error { color: #d33; font-size: 0.9em; margin-top: 5px; display: none; }
     input:invalid { border-color: #d33; }
   </style>
@@ -93,10 +84,9 @@ $conn->close();
   <?php
     include("../compartido/componentes/cabecera/index.php");
     cabecera("Editar Clientes");
-    ?>
+  ?>
 
   <main class="contenido">
-
     <form method="POST" class="formulario" id="formulario">
       <div class="campo">
         <label for="nombre">Nombre *</label>
@@ -130,7 +120,7 @@ $conn->close();
   <script>
     Swal.fire({
       title: '<?php echo $es_error ? "Error" : "Éxito"; ?>',
-      text: '<?php echo htmlspecialchars($mensaje); ?>',
+      html: '<?php echo $mensaje; ?>',
       icon: '<?php echo $es_error ? "error" : "success"; ?>',
       confirmButtonText: 'OK'
     });
@@ -138,75 +128,58 @@ $conn->close();
   <?php endif; ?>
 
   <script>
-    // Solo números en tiempo real
+    // Funciones para solo números
     function soloNumeros(input) {
-      input.addEventListener('input', function(e) {
+      input.addEventListener('input', function() {
         this.value = this.value.replace(/[^0-9]/g, '');
       });
-      input.addEventListener('keypress', function(e) {
-        if (!/[0-9]/.test(e.key)) e.preventDefault();
-      });
     }
-
     soloNumeros(document.getElementById('dpi'));
     soloNumeros(document.getElementById('telefono'));
 
-    // Validación al submit
-    document.getElementById('formulario').addEventListener('submit', function(e) {
-      let valid = true;
-      const dpi = document.getElementById('dpi').value.trim();
-      const telefono = document.getElementById('telefono').value.trim();
-      const nombre = document.getElementById('nombre').value.trim();
-
-      if (!nombre) {
-        document.getElementById('err-nombre').style.display = 'block';
-        valid = false;
-      }
-      if (dpi && (dpi.length !== 13 || !/^\d{13}$/.test(dpi))) {
-        document.getElementById('err-dpi').style.display = 'block';
-        valid = false;
-      }
-      if (telefono && (telefono.length !== 8 || !/^\d{8}$/.test(telefono))) {
-        document.getElementById('err-telefono').style.display = 'block';
-        valid = false;
-      }
-
-      if (!valid) {
-        e.preventDefault();
-        Swal.fire('Error', 'Por favor corrige los campos indicados.', 'error');
-      }
-    });
-
+    // Validaciones y SweetAlert
     document.getElementById('btn-guardar').addEventListener('click', function() {
-      // Validar antes de Swal
-      document.getElementById('formulario').dispatchEvent(new Event('submit'));
-      if (document.getElementById('formulario').checkValidity() && !document.querySelector('.error[style*="block"]')) {
-        Swal.fire({
-          title: '¿Estás seguro?',
-          text: "Se actualizará el cliente con la información proporcionada",
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonText: 'Sí, actualizar',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            document.getElementById('formulario').submit();
-          }
-        });
+      const form = document.getElementById('formulario');
+      const nombre = form.nombre.value.trim();
+      const dpi = form.dpi.value.trim();
+      const telefono = form.telefono.value.trim();
+
+      let errores = [];
+
+      if (!nombre) errores.push("El nombre es requerido.");
+      if (dpi && (!/^[0-9]{13}$/.test(dpi))) errores.push("El DPI debe tener 13 dígitos.");
+      if (telefono && (!/^[0-9]{8}$/.test(telefono))) errores.push("El teléfono debe tener 8 dígitos.");
+
+      if (errores.length > 0) {
+        Swal.fire("Error", errores.join("<br>"), "error");
+        return;
       }
+
+      Swal.fire({
+        title: "¿Actualizar cliente?",
+        text: "Se guardarán los cambios realizados.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí, actualizar",
+        cancelButtonText: "Cancelar"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
     });
 
     document.getElementById('btn-regresar').addEventListener('click', function() {
       Swal.fire({
-        title: '¿Regresar a la lista?',
-        text: "Perderás los cambios no guardados",
-        icon: 'warning',
+        title: "¿Regresar a la lista?",
+        text: "Perderás los cambios no guardados.",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonText: 'Sí, regresar',
-        cancelButtonText: 'Quedarse aquí'
+        confirmButtonText: "Sí, regresar",
+        cancelButtonText: "Cancelar"
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = 'index.php';
+          window.location.href = "index.php";
         }
       });
     });

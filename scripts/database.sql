@@ -64,6 +64,15 @@ CREATE TABLE `sucursales` (
   `numero_mesas` int DEFAULT 0,
   `creado_en` datetime
 );
+ALTER TABLE `sucursales` 
+ADD COLUMN `horarios` VARCHAR(255),
+ADD COLUMN `caracteristicas` TEXT,
+ADD COLUMN `calificacion` DECIMAL(3,2),
+ADD COLUMN `num_resenas` INT DEFAULT 0,
+ADD COLUMN reseñas TEXT AFTER caracteristicas,
+ADD COLUMN `capacidad` INT DEFAULT 0;
+
+
 
 CREATE TABLE `mesas` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
@@ -283,7 +292,23 @@ CREATE TABLE `auditoria` (
   `detalle` text,
   `creado_en` datetime DEFAULT CURRENT_TIMESTAMP
 );
--- 3. Agregar todas las Foreign Keys con ALTER TABLE (en orden para evitar errores de dependencia)
+
+
+
+CREATE TABLE IF NOT EXISTS reservaciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    telefono VARCHAR(50) NOT NULL,
+    sucursal_id INT NOT NULL,  -- Referencia al ID de la tabla 'sucursales'
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    personas INT NOT NULL DEFAULT 1,
+    comentarios TEXT,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursales(id)
+);
+
 
 ALTER TABLE `usuarios` ADD CONSTRAINT `fk_usuarios_rol_id` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
