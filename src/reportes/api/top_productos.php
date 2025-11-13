@@ -2,11 +2,16 @@
 header('Content-Type: application/json');
 
 try {
-    // Conexión a la base (igual que tus otros scripts)
-    $pdo = new PDO("mysql:host=db;dbname=mydb;charset=utf8mb4", "user", "userpassword", [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
+    // Conexión a la base
+    $pdo = new PDO(
+        "mysql:host=db;dbname=mydb;charset=utf8mb4",
+        "user",
+        "userpassword",
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]
+    );
 
     // Parámetros GET (mes y año actuales si no se pasan)
     $anio = isset($_GET['anio']) ? (int)$_GET['anio'] : (int)date('Y');
@@ -19,7 +24,7 @@ try {
             SUM(vd.cantidad) AS total_vendido
         FROM ventas_detalle vd
         INNER JOIN productos p ON p.id = vd.producto_id
-        INNER JOIN ventas v ON v.id = vd.venta_id
+        INNER INNER JOIN ventas v ON v.id = vd.venta_id
         WHERE v.estado = 'cerrada'
           AND YEAR(v.fecha_venta) = :anio
           AND MONTH(v.fecha_venta) = :mes
@@ -29,10 +34,13 @@ try {
     ";
 
     $stmt = $pdo->prepare($sql);
-    $stmt->execute(['anio' => $anio, 'mes' => $mes]);
-    $data = $stmt->fetchAll();
+    $stmt->execute([
+        'anio' => $anio,
+        'mes'  => $mes
+    ]);
 
-    echo json_encode($data);
+    echo json_encode($stmt->fetchAll());
+
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
