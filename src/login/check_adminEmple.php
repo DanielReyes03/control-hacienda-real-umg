@@ -12,7 +12,7 @@ if (!isset($_SESSION['usuario_id'])) {
  * Puedes pasar los IDs de los roles permitidos
  * Ejemplo: 1 => Administrador, 2 => Gerente, 3 => Empleado, 4 => Repartidor
  */
-$roles_permitidos = [1,2,3]; // Por defecto solo admin, cambia según necesidad
+$roles_permitidos = [1,2,3,4]; // Por defecto solo admin, cambia según necesidad
 
 // Si quieres que la página defina sus roles permitidos, puedes hacer:
 // $roles_permitidos = [1, 2]; // admin + gerente

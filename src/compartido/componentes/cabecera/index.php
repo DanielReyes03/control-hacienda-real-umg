@@ -1,5 +1,5 @@
 <?php
-    function cabecera($titulo, $linkRegresar="../../index.php") {
+    function cabecera($titulo, $linkRegresar="../inicio/index.php") {
         echo '
             <!DOCTYPE html>
             <html lang="en">

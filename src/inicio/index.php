@@ -4,6 +4,17 @@ if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../login/login.php");
     exit;
 }
+
+// Helper para escapar texto
+if (!function_exists('e')) {
+    function e($v) {
+        return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+// Datos del usuario desde sesión
+$nombre = $_SESSION['nombre_completo'] ?? $_SESSION['nombre'] ?? 'Invitado';
+$rol_id = $_SESSION['rol_id'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -22,10 +33,9 @@ if (!isset($_SESSION['usuario_id'])) {
       background-color: #f6f8fa;
     }
 
-    /* NAVBAR */
     nav {
       display: flex;
-      justify-content: center; /* Centra todo el contenido del nav */
+      justify-content: center;
       align-items: center;
       background: linear-gradient(90deg, #ffffffcc, #f3f3f3cc);
       padding: 10px 40px;
@@ -39,7 +49,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
     .nav-content {
       width: 100%;
-      max-width: 1100px; /* ancho máximo centrado */
+      max-width: 1100px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -94,7 +104,6 @@ if (!isset($_SESSION['usuario_id'])) {
       background-color: #d62828;
     }
 
-    /* HEADER */
     header {
       padding: 120px 20px 40px;
     }
@@ -111,7 +120,6 @@ if (!isset($_SESSION['usuario_id'])) {
       color: #555;
     }
 
-    /* GRID */
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -177,11 +185,10 @@ if (!isset($_SESSION['usuario_id'])) {
       width: 300px;
       height: 200px;
     }
-
   </style>
 </head>
 <body>
-  <!-- NAVBAR -->
+
   <nav>
     <div class="nav-content">
       <div class="logo">
@@ -189,67 +196,51 @@ if (!isset($_SESSION['usuario_id'])) {
         HACIENDA REAL
       </div>
 
-      <?php
-      // Helper seguro para escapar SIEMPRE strings
-      if (!function_exists('e')) {
-        function e($v) {
-          return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
-        }
-      }
-
-      // Toma valores desde sesión con fallback
-      $nombre = $_SESSION['nombre_completo'] 
-                ?? $_SESSION['nombre'] 
-                ?? 'Invitado';
-      // Si tienes rol_nombre úsalo; si no, muestra el ID o "Sin rol"
-      $rol = $_SESSION['rol_nombre'] 
-             ?? $_SESSION['rol_id'] 
-             ?? 'Sin rol';
-      ?>
-
       <div class="user-info">
         <div class="user-details">
           <h1>Bienvenido, <?= e($nombre) ?></h1>
-          <p>Rol: <?= e($rol) ?></p>
+          <p>Rol ID: <?= e($rol_id) ?></p>
         </div>
         <a href="../index.php">Cerrar sesión</a>
       </div>
     </div>
   </nav>
 
-
-  <!-- HEADER -->
   <header>
     <h1>SISTEMA WEB HACIENDA REAL</h1>
     <p>Bienvenido al panel principal</p>
   </header>
 
-  <!-- MENÚ PRINCIPAL -->
   <section class="grid-container">
-    <div class="grid-item" onclick="redirigir('../inventario/index.php')">
-      <img src="../login/assets/img/pexels-tiger-lily-4483610.jpg" alt="Inventario">
-      <div class="overlay">INVENTARIO</div>
-    </div>
 
-    <div class="grid-item" onclick="redirigir('../login/admin_usuarios.php')">
-      <img src="../login/assets/img/pexels-shkrabaanthony-5475750.jpg" alt="Compras">
-      <div class="overlay">USUARIOS</div>
-    </div>
+    <?php if ($rol_id != 5): ?>
+      <div class="grid-item" onclick="redirigir('../inventario/index.php')">
+        <img src="../login/assets/img/pexels-tiger-lily-4483610.jpg" alt="Inventario">
+        <div class="overlay">INVENTARIO</div>
+      </div>
 
-    <div class="grid-item" onclick="redirigir('../Proveedores/index.php')">
-      <img src="../login/assets/img/pexels-artempodrez-5025489.jpg" alt="Proveedores">
-      <div class="overlay">PROVEEDORES</div>
-    </div>
+      <div class="grid-item" onclick="redirigir('../login/admin_usuarios.php')">
+        <img src="../login/assets/img/pexels-shkrabaanthony-5475750.jpg" alt="Usuarios">
+        <div class="overlay">USUARIOS</div>
+      </div>
 
-    <div class="grid-item" onclick="redirigir('../reportes/index.php')">
-      <img src="../login/assets/img/pexels-olly-3760072.jpg" alt="Ventas">
-      <div class="overlay">REPORTES</div>
-    </div>
+      <div class="grid-item" onclick="redirigir('../Proveedores/index.php')">
+        <img src="../login/assets/img/pexels-artempodrez-5025489.jpg" alt="Proveedores">
+        <div class="overlay">PROVEEDORES</div>
+      </div>
 
-    <div class="grid-item" onclick="redirigir('../Planilla/index.php')">
-      <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Planilla">
-      <div class="overlay">PLANILLA</div>
-    </div>
+      <div class="grid-item" onclick="redirigir('../reportes/index.php')">
+        <img src="../login/assets/img/pexels-olly-3760072.jpg" alt="Reportes">
+        <div class="overlay">REPORTES</div>
+      </div>
+
+      <div class="grid-item" onclick="redirigir('../Planilla/index.php')">
+        <img src="../login/assets/img/pexels-biekir-2148554792-33715049.jpg" alt="Planilla">
+        <div class="overlay">PLANILLA</div>
+      </div>
+    <?php endif; ?>
+
+    <!-- Común para todos -->
     <div class="grid-item" onclick="redirigir('../compras/index.php')">
       <img src="../login/assets/img/pexels-kampus-8931691.jpg" alt="Servicio Domicilio">
       <div class="overlay">SERVICIO DOMICILIO</div>
@@ -260,14 +251,17 @@ if (!isset($_SESSION['usuario_id'])) {
       <div class="overlay">SUCURSALES</div>
     </div>
 
-    <div class="grid-item" onclick="redirigir('../Vehiculos/index.php')">
-      <img src="../login/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Control de Vehículos">
-      <div class="overlay">CONTROL DE VEHÍCULOS</div>
-    </div>
+    <?php if ($rol_id != 5): ?>
+      <div class="grid-item" onclick="redirigir('../Vehiculos/index.php')">
+        <img src="../login/assets/img/pexels-renee-razumov-2155050841-33814686.jpg" alt="Vehículos">
+        <div class="overlay">CONTROL DE VEHÍCULOS</div>
+      </div>
+    <?php endif; ?>
     
   </section>
 
-  <!-- CLIENTES Y TIENDAS -->
+  <!-- CLIENTES Y TIENDAS SOLO PARA OTROS ROLES -->
+  <?php if ($rol_id != 5): ?>
   <section>
     <div class="clientes-tiendas-container">
       <div class="grid-item clientes" onclick="redirigir('../clientes/index.php')">
@@ -280,6 +274,7 @@ if (!isset($_SESSION['usuario_id'])) {
       </div>
     </div>
   </section>
+  <?php endif; ?>
 
   <script>
     function redirigir(ruta) {
