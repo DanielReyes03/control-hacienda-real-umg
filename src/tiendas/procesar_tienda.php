@@ -1,5 +1,5 @@
 <?php
-require_once "../login/check_adminEmple.php"; 
+require_once "../login/check_admin.php"; 
 include("../db/conexion.php"); 
 $conn = conectar();
 
